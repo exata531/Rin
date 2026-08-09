@@ -1,0 +1,20 @@
+{
+  "note": "Modules that came off the list, and why. Kept in the open because a quiet delisting teaches nobody anything. Removing an entry stops new installs; it does not reach into folders where somebody already has it.",
+  "removed": [
+    {
+      "name": "weekly-review",
+      "date": "2026-08-04",
+      "reason": "Written to keep the list from being empty rather than because anybody asked for it. A brain that is asked for a weekly review can write one in the same conversation, so shipping it as a package was inventory pretending to be a product."
+    },
+    {
+      "name": "reading-log",
+      "date": "2026-08-04",
+      "reason": "Same. A running list of what you are reading is one file and a paragraph of instructions, and asking for it is faster than browsing for it."
+    },
+    {
+      "name": "flashcards",
+      "date": "2026-08-04",
+      "reason": "Same, and the worst of the three: recall questions out of a note you already wrote is exactly the kind of job the assistant should build to fit the person, not receive prebuilt."
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "weekly-review",
+  "description": "Reads the week's daily notes and writes an honest review: what happened, what slipped, and what carries forward.",
+  "author": { "name": "Peter Mei", "url": "https://github.com/exata531" },
+  "homepage": "https://github.com/exata531/rin-modules/tree/main/modules/weekly-review",
+  "license": "MIT",
+  "keywords": ["rin-module", "system"]
+}

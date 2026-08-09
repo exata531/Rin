@@ -1,0 +1,5 @@
+{
+  "registry": "rin-modules",
+  "description": "Modules for Rin. Each entry points at a folder of plain files that teaches the assistant a new job. The list starts empty on purpose: a fresh brain already knows how to write the job it is asked for, so a module is for work somebody else did that you would rather not repeat.",
+  "modules": []
+}

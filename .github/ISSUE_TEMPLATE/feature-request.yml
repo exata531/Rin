@@ -1,0 +1,31 @@
+name: Feature idea
+description: Something the app should do that it does not.
+title: "[idea] "
+labels: ["idea"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        First, the routing question: is this about the **window** or the
+        **assistant**?
+
+        If it is a new job for the assistant — a tracker, a routine, a review —
+        that is a module, and you can likely have it today by asking for it in
+        any tab. Writing and publishing one is
+        [docs/modules.md](https://github.com/exata531/Rin/blob/main/docs/modules.md).
+        The app's features are the window itself: the panel, the tabs, the bar,
+        the terminal.
+  - type: textarea
+    id: job
+    attributes:
+      label: The job
+      description: What you are trying to do, not the control you want. "I keep losing which tab asked me something" beats "add a notification center".
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: How you do it today
+      description: The workaround, if there is one.
+    validations:
+      required: false

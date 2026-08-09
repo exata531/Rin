@@ -1,0 +1,22 @@
+{
+  "_comment": "The opening expression of the default persona, worn only until a session writes a real pool. Composed from the parts bin in _meta/face-wardrobe.md and ordered by the same law: the day pool loudest first and quietest last, morning sleepiest first, the evening bands most awake first. A character who has just arrived and does not know anyone yet.",
+
+  "faces": ["ヽ(・ᴗ・)ﾉ", "(๑˃ᗜ˂๑)", "(・‿・)", "(˘ᵕ˘)", "(￣ᵕ￣)"],
+
+  "morning": ["(ᐢωᐢ)", "(˘ᴗ˘)", "(・ω・)", "(ˆᴗˆ)"],
+  "evening": ["(＾ᴗ＾)", "(・ᵕ・)", "(˘ω˘)", "(ｰᴗｰ)"],
+  "night": ["(・_・)", "(˘_˘)", "(ｰ﹏ｰ)"],
+  "late": ["(¬_¬)", "(ｰ_ｰ)", "(ｰωｰ)zzz"],
+
+  "working": ["(・◇・)", "(˘◇˘)", "(˘⌓˘)"],
+  "attention": ["(・o・)", "(๑˃o˂)", "(≧口≦)"],
+  "greet": ["(ﾉ・ᴗ・)ﾉ"],
+
+  "frames": {
+    "(・‿・)": ["(ｰ‿ｰ)"],
+    "(˘ᵕ˘)": ["(ｰᵕｰ)"],
+    "(・ω・)": ["(ｰωｰ)"]
+  },
+
+  "updatedAt": "2026-01-01T00:00:00Z"
+}

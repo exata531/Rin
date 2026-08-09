@@ -1,0 +1,14 @@
+[
+  {
+    "title": "Morning check-in",
+    "prompt": "Good morning. Look at my notes and tell me what today should look like."
+  },
+  {
+    "title": "Sort my inbox",
+    "prompt": "Help me go through whatever is sitting in 00-inbox and file it where it belongs."
+  },
+  {
+    "title": "Just talking",
+    "prompt": "Nothing due, nothing planned. Let's just talk."
+  }
+]

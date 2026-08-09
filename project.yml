@@ -1,0 +1,94 @@
+name: Rin
+options:
+  bundleIdPrefix: com.petermei
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+
+configs:
+  Debug: debug
+  Release: release
+
+packages:
+  SwiftTerm:
+    url: https://github.com/migueldeicaza/SwiftTerm
+    exactVersion: 1.11.2
+
+targets:
+  Rin:
+    type: application
+    platform: macOS
+    sources:
+      - Sources
+      - path: Resources
+        buildPhase: resources
+      # The blank brain, shipped inside the bundle as one folder reference so
+      # first run works offline and never fetches anything.
+      - path: skeleton
+        type: folder
+        buildPhase: resources
+    dependencies:
+      - package: SwiftTerm
+    preBuildScripts:
+      # The version rule, enforced by the build rather than by anybody
+      # remembering it (2026-08-04). A hand-typed version, or a new release
+      # line whose city has not been drawn, fails here with the reason
+      # printed. scripts/release.py is the only thing that should be moving
+      # these numbers; docs/versions.md says why.
+      - name: Version rule
+        script: python3 "$SRCROOT/scripts/check-version.py" --work
+        basedOnDependencyAnalysis: false
+    postBuildScripts:
+      # The blank brain ships as a folder REFERENCE, so the bundle takes
+      # whatever happens to be sitting in `skeleton/` when the build runs:
+      # python bytecode, Finder droppings, an editor's scratch file. None of
+      # it is committed (it is all gitignored), which is exactly why nobody
+      # notices — two builds on this Mac shipped two DIFFERENT piles of it.
+      # That folder is copied wholesale into a new user's brain on first run,
+      # so the junk lands in the one place the whole product asks them to open
+      # and read. Pruned here, because "keep the working copy clean" is a
+      # hope, not a mechanism (2026-08-08).
+      - name: Prune the shipped brain
+        script: |
+          BRAIN="$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH"
+          [ -d "$BRAIN" ] || exit 0
+          find "$BRAIN" -name '__pycache__' -type d -prune -exec rm -rf {} + 2>/dev/null || true
+          find "$BRAIN" -name '*.pyc' -delete 2>/dev/null || true
+          find "$BRAIN" -name '.DS_Store' -delete 2>/dev/null || true
+          exit 0
+        basedOnDependencyAnalysis: false
+    info:
+      path: Sources/Info.plist
+      properties:
+        CFBundleName: Rin
+        CFBundleDisplayName: Rin
+        CFBundleIconFile: AppIcon
+        # Semantic Versioning (semver.org). 0.x is initial development, which
+        # is what this is, and 1.0.0 is the public release. Nobody types
+        # either number: scripts/release.py writes both. See docs/versions.md.
+        CFBundleShortVersionString: "1.0.0"
+        CFBundleVersion: "112"
+        LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
+        LSUIElement: true
+        NSPrincipalClass: NSApplication
+        NSHighResolutionCapable: true
+        LSApplicationCategoryType: public.app-category.utilities
+        # rin://install/<module>, the modules page's handoff into the app.
+        # One verb, a name-shaped argument, and a confirmation before anything
+        # opens. Nothing else answers to this scheme.
+        CFBundleURLTypes:
+          - CFBundleURLName: com.petermei.rin.install
+            CFBundleTypeRole: Viewer
+            CFBundleURLSchemes: [rin]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.petermei.rin
+        PRODUCT_NAME: Rin
+        SWIFT_VERSION: "5.9"
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+      configs:
+        Debug:
+          SWIFT_OPTIMIZATION_LEVEL: -Onone
+        Release:
+          SWIFT_OPTIMIZATION_LEVEL: -O

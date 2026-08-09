@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    width: 1200px; height: 630px; overflow: hidden; position: relative;
+    background: #fff7ed; color: #292524;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .pad { padding: 62px 70px; height: 100%; display: flex; flex-direction: column; max-width: 700px; }
+
+  .mark { display: flex; align-items: center; gap: 16px; font-size: 30px; font-weight: 800; letter-spacing: -.5px; }
+  .sq {
+    flex: none; width: 62px; height: 62px; border-radius: 17px; overflow: hidden;
+    background: #1c1917; color: #fff7ed; line-height: 1;
+    display: grid; place-items: center; font-size: 34px; font-weight: 400;
+    box-shadow: 0 3px 6px rgba(68,19,6,.14), 0 16px 30px -12px rgba(68,19,6,.4);
+  }
+
+  h1 {
+    margin-top: 52px; max-width: 12ch;
+    font-size: 74px; font-weight: 800; line-height: .98; letter-spacing: -.042em;
+  }
+  .hl { position: relative; white-space: nowrap; }
+  .hl::before {
+    content: ""; position: absolute; inset: .08em -.09em -.02em;
+    background: rgba(126,231,135,.5); border-radius: .09em; z-index: -1;
+    transform: skewY(-.5deg);
+  }
+  .sub { margin-top: 24px; max-width: 27ch; font-size: 24px; line-height: 1.45; color: #6b6560; }
+
+  .row { margin-top: auto; display: flex; align-items: center; gap: 14px; }
+  .pill {
+    font-size: 19px; font-weight: 700; color: #6b6560; white-space: nowrap;
+    background: #f7ecdc; border-radius: 12px; padding: 11px 20px;
+  }
+
+  /* the panel, cropped off the right edge */
+  .panel {
+    position: absolute; right: -70px; top: 150px; width: 452px;
+    background: #232936; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 4px 10px rgba(40,15,5,.2), 0 46px 70px -30px rgba(40,15,5,.6);
+    transform: rotate(-3deg);
+  }
+  .tabs { display: flex; gap: 6px; padding: 8px 9px; background: rgba(221,224,229,.06); }
+  .tab {
+    flex: 1; height: 28px; border-radius: 99px; font-size: 13px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: rgba(221,224,229,.05); color: #99a2b0;
+  }
+  .tab.on { background: rgba(221,224,229,.15); color: #dde0e5; font-weight: 600; }
+  .dot { width: 7px; height: 7px; border-radius: 99px; flex: none; }
+  .screen {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 14.5px; line-height: 1.95; color: #dde0e5;
+    padding: 18px 20px 30px; white-space: pre;
+  }
+  .u { color: #99a2b0; }
+  .glyph {
+    position: absolute; right: 26px; bottom: -74px; font-size: 300px; line-height: 1.3;
+    color: rgba(68,19,6,.055); user-select: none;
+  }
+</style>
+</head>
+<body>
+  <div class="glyph">凛</div>
+
+  <div class="panel">
+    <div class="tabs">
+      <div class="tab on">vault <span class="dot" style="background:rgba(221,224,229,.6)"></span></div>
+      <div class="tab">essay <span class="dot" style="background:#f7be00"></span></div>
+      <div class="tab">rin <span class="dot" style="box-shadow:inset 0 0 0 1.5px rgba(221,224,229,.5)"></span></div>
+    </div>
+    <div class="screen"><span class="u">&gt; what is due thursday</span>
+
+bio lab writeup and the
+history reading response.
+that's the whole list.
+
+the writeup is the one
+that eats your evening,
+so start there.</div>
+  </div>
+
+  <div class="pad">
+    <div class="mark"><span class="sq">凛</span> Rin</div>
+    <h1>An assistant that <span class="hl">knows</span> your whole life</h1>
+    <p class="sub">A second brain that ships already built, dropped down from the menu bar.</p>
+    <div class="row">
+      <span class="pill">Free and open source</span>
+      <span class="pill">Mac only</span>
+      <span class="pill">Stays on your disk</span>
+    </div>
+  </div>
+</body>
+</html>

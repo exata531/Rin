@@ -1,0 +1,84 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/statusline.py\"",
+    "padding": 0
+  },
+  "permissions": {
+    "deny": [
+      "Bash(rm -r:*)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -fr:*)",
+      "Bash(sudo:*)",
+      "Bash(dd:*)",
+      "Bash(mkfs:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git clean -fd:*)",
+      "Bash(git clean -xfd:*)",
+      "Bash(git filter-branch:*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/session_status.py\"",
+            "timeout": 20
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/persona_anchor.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/persona_anchor.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate_note.py\"",
+            "timeout": 20
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/persona_anchor.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/voice_guard.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

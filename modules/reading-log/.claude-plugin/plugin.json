@@ -1,0 +1,8 @@
+{
+  "name": "reading-log",
+  "description": "One running list of what you are reading, what you finished, and what you thought of it.",
+  "author": { "name": "Peter Mei", "url": "https://github.com/exata531" },
+  "homepage": "https://github.com/exata531/rin-modules/tree/main/modules/reading-log",
+  "license": "MIT",
+  "keywords": ["rin-module", "reading"]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "flashcards",
+  "description": "Turns a note you already wrote into recall questions, quizzes you, and remembers what you keep missing.",
+  "author": { "name": "Peter Mei", "url": "https://github.com/exata531" },
+  "homepage": "https://github.com/exata531/rin-modules/tree/main/modules/flashcards",
+  "license": "MIT",
+  "keywords": ["rin-module", "school"]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "your-module-name",
+  "description": "One sentence about what this teaches the assistant to do.",
+  "author": { "name": "Your Name", "url": "https://github.com/your-handle" },
+  "license": "MIT",
+  "keywords": ["rin-module"]
+}

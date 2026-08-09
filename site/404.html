@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Not here · Rin</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#fff7ed" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171310" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='15' fill='%231c1917'/><text x='32' y='45' font-size='40' text-anchor='middle' fill='%23fff7ed' font-family='sans-serif'>凛</text></svg>">
+
+<style>
+/* ══════════════════════════════════════════════════════════════
+   Rin: not found.
+
+   The token block below is duplicated, byte for byte, in
+   index.html and modules.html (via scripts/modules-template.html).
+   A token change lands in all three or in none.
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  color-scheme: light;
+
+  /* ── colour ─────────────────────────────────────────────── */
+  --cream:   #fff7ed;
+  --cream-2: #f7ecdc;
+  --paper:   #fffdf8;
+  --line:    #eee0cc;
+  --ink:     #292524;   /* 13.4:1 on cream */
+  --ink-2:   #6b6560;   /*  5.5:1 */
+  --ink-3:   #78716c;   /*  4.6:1, the floor for body text */
+  --hair:    #cfc5b8;   /* decorative only: rules, tree connectors */
+  --black:   #1c1917;   /* literal black: only inside the stage artwork */
+  --solid:   #1c1917;   /* strong fill: primary button, app tile, skip link */
+  --solid-fg:#ffffff;
+  --chip:    rgba(255,255,255,.16);
+  --chip-2:  rgba(41,37,36,.09);
+  --wordmark:rgba(68, 19, 6, .17);
+  --mark:    rgba(126, 231, 135, .5);   /* the phosphor highlighter */
+
+  --term:    #232936;
+  --term-fg: #dde0e5;
+  --band-2:  #99a2b0;
+  --band-3:  #7c8593;
+  --green:   #7ee787;
+  --amber:   #f7be00;
+
+  --ui: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, monospace;
+
+  /* ── type ───────────────────────────────────────────────────
+     Five display steps, then a UI ladder that steps by one. Every
+     heading and every line of chrome picks a step from here; nothing
+     invents its own size, and half-point neighbours (14 and 14.5 for
+     the same job) are what this replaced. */
+  --t-display: clamp(50px, 8.4vw, 104px);
+  --t-title:   clamp(31px, 4vw, 52px);
+  --t-sub:     clamp(28px, 5vw, 38px);
+  --t-card:    clamp(23px, 2.4vw, 30px);
+  --t-tile:    19px;
+  --t-lead:    18px;
+  --t-body:    17px;
+  --t-copy:    16px;
+  --t-ui:      15.5px;
+  --t-small:   14.5px;
+  --t-fine:    13.5px;
+  --t-tiny:    12.5px;
+  --t-nano:    11.5px;
+
+  /* ── the logo, one size on every page ───────────────────── */
+  --mark-tile:  42px;
+  --mark-glyph: 23px;
+  --mark-text:  21px;
+  --mark-gap:   11px;
+
+  /* ── radius ─────────────────────────────────────────────── */
+  --r-code: 6px;
+  --r-chip: 8px;
+  --r-tile: 12px;
+  --r-btn:  14px;
+  --r-card: 22px;
+  --r-pill: 999px;
+
+  /* ── frame ──────────────────────────────────────────────── */
+  --gut:   clamp(20px, 4vw, 30px);   /* the page gutter: wrap and nav share it */
+  --nav-h: 72px;                     /* measured: 13 + the nav button's box + 13 */
+  --sec:   clamp(80px, 10vw, 140px);
+
+  --boing:  cubic-bezier(.34, 1.56, .64, 1);
+  --settle: cubic-bezier(0, 0, .2, 1);
+  --shadow-btn:   0 2px 4px rgba(68, 19, 6, .12), 0 12px 24px -10px rgba(68, 19, 6, .35);
+  --shadow-card:  0 1px 2px rgba(68, 19, 6, .05), 0 18px 40px -28px rgba(68, 19, 6, .3);
+  --shadow-panel: 0 2px 10px rgba(68, 19, 6, .1), 0 40px 70px -34px rgba(68, 19, 6, .45);
+  --shadow-stage: 0 2px 10px rgba(68, 19, 6, .1), 0 50px 90px -40px rgba(68, 19, 6, .5);
+  --shadow-mark:  var(--shadow-btn);
+}
+
+/* ══ dark ══════════════════════════════════════════════════════
+   Warm dark, not neutral: the cream canvas has a brown cast and the
+   dark one keeps it. Every text tone was re-picked against the new
+   canvas rather than dimmed, so the 4.5:1 floor still holds. Only
+   token values live here; a rule that competes with a real rule has
+   to sit after it, near the bottom of the file. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --cream:   #171310;
+    --cream-2: #241e19;
+    --paper:   #1e1915;
+    --line:    #342c25;
+    --ink:     #f5ede2;   /* 15.9:1 on the dark canvas */
+    --ink-2:   #b8ada0;   /*  8.4:1 */
+    --ink-3:   #9a8d80;   /*  5.7:1 */
+    --hair:    #4a4038;
+
+    --solid:   #f5ede2;
+    --solid-fg:#191410;
+    --chip:    rgba(25,20,16,.14);
+    --chip-2:  rgba(245,237,226,.1);
+    --wordmark:rgba(245,237,226,.1);
+    --mark:    rgba(126, 231, 135, .33);
+
+    --shadow-btn:   0 2px 4px rgba(0,0,0,.4), 0 12px 24px -10px rgba(0,0,0,.7);
+    --shadow-card:  0 1px 2px rgba(0,0,0,.3), 0 18px 40px -28px rgba(0,0,0,.8);
+    --shadow-panel: 0 2px 10px rgba(0,0,0,.4), 0 40px 70px -34px rgba(0,0,0,.9);
+    --shadow-stage: 0 2px 10px rgba(0,0,0,.4), 0 50px 90px -40px rgba(0,0,0,.9);
+    /* the tile is already the pale fill on a dark canvas; a drop
+       shadow under it reads as grime rather than lift */
+    --shadow-mark:  none;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  min-height: 100vh; background: var(--cream); color: var(--ink);
+  font-family: var(--ui); font-size: var(--t-body); line-height: 1.55; letter-spacing: -.1px;
+  -webkit-font-smoothing: antialiased;
+  display: grid; place-items: center; padding: 40px 24px;
+}
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 2.5px solid var(--ink); outline-offset: 3px; border-radius: var(--r-tile); }
+h1, p { margin: 0; }
+
+.box { width: 100%; max-width: 520px; text-align: center; }
+.mark {
+  display: inline-flex; align-items: center; gap: var(--mark-gap);
+  font-size: var(--mark-text); font-weight: 800; letter-spacing: -.4px;
+}
+.mark .sq {
+  flex: none; width: var(--mark-tile); height: var(--mark-tile);
+  border-radius: var(--r-tile); overflow: hidden; line-height: 1;
+  background: var(--solid); color: var(--solid-fg);
+  display: grid; place-items: center;
+  font-size: var(--mark-glyph); font-weight: 400;
+  box-shadow: var(--shadow-mark);
+}
+
+.panel {
+  margin: 40px 0 34px; text-align: left;
+  background: var(--term); border-radius: 14px; overflow: hidden;
+  box-shadow: var(--shadow-panel);
+}
+.tabs { display: flex; gap: 6px; padding: 7px 8px; background: rgba(221,224,229,.06); }
+.tab {
+  flex: 1; height: 27px; border-radius: 999px; font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(221,224,229,.05); color: var(--band-2);
+}
+.tab.on { background: rgba(221,224,229,.15); color: var(--term-fg); font-weight: 600; }
+.screen {
+  font-family: var(--mono); font-size: 13px; line-height: 1.95; color: var(--term-fg);
+  padding: 18px 20px 22px;
+}
+.screen .u { color: var(--band-2); }
+.caret {
+  display: inline-block; width: 7px; height: 14px; vertical-align: -2px;
+  background: var(--term-fg); animation: blink 1.1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+h1 { font-size: var(--t-sub); font-weight: 800; letter-spacing: -.035em; line-height: 1.06; }
+.sub { margin-top: 12px; color: var(--ink-2); font-size: var(--t-copy); }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px; margin-top: 26px;
+  border-radius: var(--r-btn); padding: 14px 24px; font-size: var(--t-copy); font-weight: 700;
+  background: var(--solid); color: var(--solid-fg); box-shadow: var(--shadow-btn);
+  transition: transform .55s var(--boing);
+}
+.btn:hover { transform: translateY(-2px) scale(1.025); }
+.btn:active { transform: translateY(1px) scale(.98); transition-duration: .12s; }
+.alt { margin-top: 18px; font-size: var(--t-small); color: var(--ink-3); }
+.alt a { color: var(--ink-2); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.alt a:hover { color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+</style>
+</head>
+<body>
+  <main class="box">
+    <a class="mark" href="/Rin/"><span class="sq" aria-hidden="true">凛</span> Rin</a>
+
+    <div class="panel" aria-hidden="true">
+      <div class="tabs">
+        <div class="tab on">vault</div>
+        <div class="tab">essay</div>
+        <div class="tab">rin</div>
+      </div>
+      <div class="screen"><span class="u">&gt; where did this page go</span><br><br>
+        no idea. it's not in the brain,<br>
+        and I keep good notes.<br><br>
+        <span class="u">&gt; <span class="caret"></span></span></div>
+    </div>
+
+    <h1>That page isn't here</h1>
+    <p class="sub">Wrong link, or something moved. The front page still works.</p>
+    <a class="btn" href="/Rin/">Back to the start</a>
+    <p class="alt">Looking for the app? <a href="https://github.com/exata531/Rin/releases">Download for Mac</a>
+      or <a href="https://github.com/exata531/Rin">read the source</a>.</p>
+  </main>
+</body>
+</html>

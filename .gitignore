@@ -1,0 +1,7 @@
+build/
+Rin.xcodeproj/
+.DS_Store
+.gstack/
+
+# python bytecode from the skeleton's own scripts
+__pycache__/

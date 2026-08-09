@@ -1,0 +1,56 @@
+name: Publish the site
+
+# Publishes site/ to GitHub Pages. Pages cannot exist while the repo is
+# private (free plan), so the job skips itself until the repo flips public —
+# a skipped run, not a red X on every push. Once public it still needs Pages
+# switched on once: Settings, Pages, Source: GitHub Actions.
+#
+# The modules page is generated from modules/registry.json, and the generated
+# file is committed. This job rebuilds it and refuses to deploy if what is
+# committed is not what the generator produces, so the repo and the live site
+# can never quietly disagree. It does NOT commit the fix itself: a push made
+# with the default token fires no further workflows, so a chain that commits
+# and expects a redeploy would silently never deploy at all.
+
+on:
+  push:
+    branches: [main]
+    paths: ['site/**', 'modules/**', 'scripts/**', '.github/workflows/site.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rebuild the module index and page
+        run: |
+          python3 scripts/check-modules.py
+          python3 scripts/build-modules.py
+      - name: Fail if the committed page is stale
+        run: |
+          if ! git diff --quiet -- modules/index.json site/modules.html; then
+            echo "::error::modules/index.json or site/modules.html is out of date."
+            echo "Run: python3 scripts/check-modules.py && python3 scripts/build-modules.py"
+            git --no-pager diff --stat -- modules/index.json site/modules.html
+            exit 1
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4

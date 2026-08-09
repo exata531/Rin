@@ -1,0 +1,69 @@
+name: Check modules
+
+# Every submission runs this before anybody reads it. It validates the
+# registry, reads each module's files at the exact commit the entry pins, and
+# posts back what that module can actually DO — computed from the files, not
+# taken from the pull request description.
+#
+# What it catches is carelessness and low-effort malice. It does not catch a
+# determined author, and nothing here should ever be described as if it does.
+
+on:
+  pull_request:
+    paths: ['modules/**', 'scripts/check-modules.py', 'scripts/build-modules.py']
+  push:
+    branches: [main]
+    paths: ['modules/**', 'scripts/check-modules.py']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Only the registry file may change
+        if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git fetch --no-tags --depth=1 origin "$BASE" || true
+          changed=$(git diff --name-only "$BASE" "$HEAD" || true)
+          echo "$changed"
+          # A submission that also edits the app, the site, or the checker is
+          # not a submission. This is the rule that keeps review to one file.
+          if echo "$changed" | grep -vE '^(modules/|$)' | grep -q .; then
+            echo "::error::A module submission may only touch modules/. Open a separate pull request for anything else."
+            exit 1
+          fi
+
+      - name: Read every module
+        id: check
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -o pipefail
+          python3 scripts/check-modules.py --report --check-only | tee report.md
+
+      - name: Say what it found
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ ! -s report.md ]; then echo "The check produced no report." > report.md; fi
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file report.md
+
+      - name: Keep the index and the page honest
+        if: github.event_name == 'push'
+        run: |
+          python3 scripts/check-modules.py
+          python3 scripts/build-modules.py
+          if ! git diff --quiet -- modules/index.json site/modules.html; then
+            echo "::error::modules/index.json or site/modules.html needs regenerating."
+            exit 1
+          fi

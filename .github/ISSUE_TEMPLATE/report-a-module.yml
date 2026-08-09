@@ -1,0 +1,41 @@
+name: Report a module
+description: Something on the module list does something it should not.
+title: "[module] "
+labels: ["module report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A credible report gets the module taken off the list first and discussed
+        after. Delisting is reversible; a folder full of somebody's life is not.
+
+        If you think this is being actively used to harm people, say so in the
+        first line and do not wait to fill in the rest.
+  - type: input
+    id: module
+    attributes:
+      label: Which module
+      placeholder: run-tracker
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What it does that it should not
+      description: What you saw, and how you saw it. A file path, a command, a line in a skill — anything concrete beats a suspicion.
+    validations:
+      required: true
+  - type: textarea
+    id: where
+    attributes:
+      label: Where in the code
+      description: A link to the line, if you have one.
+  - type: checkboxes
+    id: kind
+    attributes:
+      label: What kind of problem
+      options:
+        - label: It reads or sends something it never said it would
+        - label: It changes or deletes things outside what it described
+        - label: Its description does not match what it actually does
+        - label: It is broken rather than dangerous

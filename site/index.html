@@ -1,0 +1,1359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rin: an assistant that knows your whole life, for Mac</title>
+<meta name="description" content="Rin gives your Mac a second brain and drops it down from the menu bar whenever you need it. Free, open source, and the brain is a folder on your own disk.">
+<meta name="theme-color" content="#fff7ed" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171310" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://exata531.github.io/Rin/">
+<meta property="og:title" content="Rin: an assistant that knows your whole life">
+<meta property="og:description" content="A Claude brain wrapped in an app, dropped down from the menu bar. Free, open source, Mac only.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://exata531.github.io/Rin/">
+<meta property="og:site_name" content="Rin">
+<meta property="og:image" content="https://exata531.github.io/Rin/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Rin. An assistant that knows your whole life. A dark session panel showing a question about Thursday's homework and the answer.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://exata531.github.io/Rin/og.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='15' fill='%231c1917'/><text x='32' y='45' font-size='40' text-anchor='middle' fill='%23fff7ed' font-family='sans-serif'>凛</text></svg>">
+
+<style>
+/* ══════════════════════════════════════════════════════════════
+   Rin: landing page.
+
+   Warm cream canvas, stone-black ink, one huge left-aligned
+   headline. The middle of the page is a single pinned stage: a
+   Mac desktop that stays put while the scroll wheel plays the
+   app's real gestures on it, one act at a time. Every moving
+   value is a CSS custom property written from one scroll loop.
+
+   Without JS, without a mouse wheel, or on a phone, the same
+   markup lays out as a plain page with the panel already open.
+
+   The token block below is duplicated, byte for byte, in
+   modules.html (via scripts/modules-template.html) and 404.html,
+   because every page here is one self-contained file with no
+   build step and no request to anywhere. A token change lands in
+   all three or in none, and nothing outside the block invents a
+   size: pick a step or add one. The one exception is the fake
+   desktop in the middle of this page, which is a picture of
+   another app and keeps its own tuned numbers.
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  color-scheme: light;
+
+  /* ── colour ─────────────────────────────────────────────── */
+  --cream:   #fff7ed;
+  --cream-2: #f7ecdc;
+  --paper:   #fffdf8;
+  --line:    #eee0cc;
+  --ink:     #292524;   /* 13.4:1 on cream */
+  --ink-2:   #6b6560;   /*  5.5:1 */
+  --ink-3:   #78716c;   /*  4.6:1, the floor for body text */
+  --hair:    #cfc5b8;   /* decorative only: rules, tree connectors */
+  --black:   #1c1917;   /* literal black: only inside the stage artwork */
+  --solid:   #1c1917;   /* strong fill: primary button, app tile, skip link */
+  --solid-fg:#ffffff;
+  --chip:    rgba(255,255,255,.16);
+  --chip-2:  rgba(41,37,36,.09);
+  --wordmark:rgba(68, 19, 6, .17);
+  --mark:    rgba(126, 231, 135, .5);   /* the phosphor highlighter */
+
+  --term:    #232936;
+  --term-fg: #dde0e5;
+  --band-2:  #99a2b0;
+  --band-3:  #7c8593;
+  --green:   #7ee787;
+  --amber:   #f7be00;
+
+  --ui: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, monospace;
+
+  /* ── type ───────────────────────────────────────────────────
+     Five display steps, then a UI ladder that steps by one. Every
+     heading and every line of chrome picks a step from here; nothing
+     invents its own size, and half-point neighbours (14 and 14.5 for
+     the same job) are what this replaced. */
+  --t-display: clamp(50px, 8.4vw, 104px);
+  --t-title:   clamp(31px, 4vw, 52px);
+  --t-sub:     clamp(28px, 5vw, 38px);
+  --t-card:    clamp(23px, 2.4vw, 30px);
+  --t-tile:    19px;
+  --t-lead:    18px;
+  --t-body:    17px;
+  --t-copy:    16px;
+  --t-ui:      15.5px;
+  --t-small:   14.5px;
+  --t-fine:    13.5px;
+  --t-tiny:    12.5px;
+  --t-nano:    11.5px;
+
+  /* ── the logo, one size on every page ───────────────────── */
+  --mark-tile:  42px;
+  --mark-glyph: 23px;
+  --mark-text:  21px;
+  --mark-gap:   11px;
+
+  /* ── radius ─────────────────────────────────────────────── */
+  --r-code: 6px;
+  --r-chip: 8px;
+  --r-tile: 12px;
+  --r-btn:  14px;
+  --r-card: 22px;
+  --r-pill: 999px;
+
+  /* ── frame ──────────────────────────────────────────────── */
+  --gut:   clamp(20px, 4vw, 30px);   /* the page gutter: wrap and nav share it */
+  --nav-h: 72px;                     /* measured: 13 + the nav button's box + 13 */
+  --sec:   clamp(80px, 10vw, 140px);
+
+  --boing:  cubic-bezier(.34, 1.56, .64, 1);
+  --settle: cubic-bezier(0, 0, .2, 1);
+  --shadow-btn:   0 2px 4px rgba(68, 19, 6, .12), 0 12px 24px -10px rgba(68, 19, 6, .35);
+  --shadow-card:  0 1px 2px rgba(68, 19, 6, .05), 0 18px 40px -28px rgba(68, 19, 6, .3);
+  --shadow-panel: 0 2px 10px rgba(68, 19, 6, .1), 0 40px 70px -34px rgba(68, 19, 6, .45);
+  --shadow-stage: 0 2px 10px rgba(68, 19, 6, .1), 0 50px 90px -40px rgba(68, 19, 6, .5);
+  --shadow-mark:  var(--shadow-btn);
+}
+
+/* ══ dark ══════════════════════════════════════════════════════
+   Warm dark, not neutral: the cream canvas has a brown cast and the
+   dark one keeps it. Every text tone was re-picked against the new
+   canvas rather than dimmed, so the 4.5:1 floor still holds. Only
+   token values live here; a rule that competes with a real rule has
+   to sit after it, near the bottom of the file. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --cream:   #171310;
+    --cream-2: #241e19;
+    --paper:   #1e1915;
+    --line:    #342c25;
+    --ink:     #f5ede2;   /* 15.9:1 on the dark canvas */
+    --ink-2:   #b8ada0;   /*  8.4:1 */
+    --ink-3:   #9a8d80;   /*  5.7:1 */
+    --hair:    #4a4038;
+
+    --solid:   #f5ede2;
+    --solid-fg:#191410;
+    --chip:    rgba(25,20,16,.14);
+    --chip-2:  rgba(245,237,226,.1);
+    --wordmark:rgba(245,237,226,.1);
+    --mark:    rgba(126, 231, 135, .33);
+
+    --shadow-btn:   0 2px 4px rgba(0,0,0,.4), 0 12px 24px -10px rgba(0,0,0,.7);
+    --shadow-card:  0 1px 2px rgba(0,0,0,.3), 0 18px 40px -28px rgba(0,0,0,.8);
+    --shadow-panel: 0 2px 10px rgba(0,0,0,.4), 0 40px 70px -34px rgba(0,0,0,.9);
+    --shadow-stage: 0 2px 10px rgba(0,0,0,.4), 0 50px 90px -40px rgba(0,0,0,.9);
+    /* the tile is already the pale fill on a dark canvas; a drop
+       shadow under it reads as grime rather than lift */
+    --shadow-mark:  none;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--cream); color: var(--ink);
+  font-family: var(--ui); font-size: var(--t-body); line-height: 1.55;
+  letter-spacing: -.1px; -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+h1, h2, h3, h4, p { margin: 0; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+:focus-visible { outline: 2.5px solid var(--ink); outline-offset: 3px; border-radius: var(--r-tile); }
+main:focus { outline: none; }
+::selection { background: var(--mark); color: var(--ink); }
+.wrap { max-width: 1140px; margin-inline: auto; padding-inline: var(--gut); }
+
+/* read by assistive tech, never drawn */
+.sr {
+  position: absolute; width: 1px; height: 1px; margin: -1px;
+  padding: 0; border: 0; overflow: hidden; white-space: nowrap;
+  clip-path: inset(50%);
+}
+.skip {
+  position: fixed; top: 10px; left: 10px; z-index: 90;
+  padding: 12px 20px; border-radius: var(--r-tile); font-weight: 700;
+  background: var(--solid); color: var(--solid-fg); box-shadow: var(--shadow-btn);
+  transform: translateY(-160%); transition: transform .3s var(--settle);
+}
+.skip:focus { transform: none; }
+
+.eyebrow {
+  font-size: var(--t-tiny); font-weight: 800; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+
+/* ── nav ───────────────────────────────────────────────────── */
+.nav {
+  position: fixed; inset: 0 0 auto; z-index: 60;
+  display: flex; align-items: center; gap: 20px;
+  padding: 13px var(--gut);
+  transition: background .35s var(--settle), box-shadow .35s var(--settle);
+}
+.nav::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: color-mix(in srgb, var(--cream) 82%, transparent);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--line) 70%, transparent);
+  opacity: 0; transition: opacity .4s var(--settle);
+}
+.nav.solid::before { opacity: 1; }
+.mark {
+  display: inline-flex; align-items: center; gap: var(--mark-gap);
+  font-size: var(--mark-text); font-weight: 800; letter-spacing: -.4px;
+}
+.mark .sq {
+  flex: none; width: var(--mark-tile); height: var(--mark-tile);
+  border-radius: var(--r-tile); overflow: hidden; line-height: 1;
+  background: var(--solid); color: var(--solid-fg);
+  display: grid; place-items: center;
+  font-size: var(--mark-glyph); font-weight: 400;
+  box-shadow: var(--shadow-mark);
+}
+.nav .right { margin-left: auto; display: flex; align-items: center; gap: 18px; }
+.nav .quiet { font-size: var(--t-ui); font-weight: 700; color: var(--ink-2); transition: color .2s var(--settle); }
+.nav .quiet:hover { color: var(--ink); }
+/* Only a link duplicated in the footer may vanish on a phone. Source is;
+   Modules keeps its place, because the nav is the only route to it. */
+@media (max-width: 520px) { .nav .quiet.opt { display: none; } }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  border-radius: var(--r-btn); padding: 14px 24px;
+  font-size: var(--t-copy); font-weight: 700; white-space: nowrap;
+  transition: transform .55s var(--boing), box-shadow .3s var(--settle), filter .2s var(--settle);
+}
+.btn:hover { transform: translateY(-2px) scale(1.025); }
+.btn:active { transform: translateY(1px) scale(.98); transition-duration: .12s; }
+.btn--black { background: var(--solid); color: var(--solid-fg); box-shadow: var(--shadow-btn); }
+.btn--beige { background: var(--cream-2); color: var(--ink); }
+.btn--beige:hover { filter: brightness(.98); }
+.btn .chip { background: var(--chip); font-size: var(--t-fine); font-weight: 700; border-radius: var(--r-chip); padding: 3px 9px; }
+.btn--beige .chip { background: var(--chip-2); }
+.nav .btn { padding: 11px 19px; font-size: var(--t-ui); }
+
+/* ── hero ──────────────────────────────────────────────────── */
+.hero { position: relative; padding: clamp(104px, 15vh, 168px) 0 0; }
+.hero-in {
+  position: relative; z-index: 2;
+  transform: translateY(var(--hy, 0px));
+  opacity: var(--ho, 1);
+  will-change: transform;
+}
+
+/* the cluster: three pages out of the brain, drifting at different
+   rates. Only shown where there is genuinely room beside the headline. */
+/* tucked into the top right, clear of the headline's widest line at
+   every width where it is shown at all */
+.hero-art {
+  position: absolute; right: -60px; top: 88px;
+  width: 380px; height: 440px; z-index: 1;
+  opacity: var(--ao, 1); pointer-events: none;
+}
+/* Between roughly a small laptop and a large one there is still room for
+   the cluster, just less of it: scale it down from the top right rather
+   than dropping it and handing the fold back to empty space. Below that
+   the headline reaches too far across and it goes. */
+@media (max-width: 1279px) and (min-width: 1000px) {
+  .hero-art { transform: scale(.76); transform-origin: top right; right: -22px; top: 78px; }
+}
+@media (max-width: 999px) { .hero-art { display: none; } }
+.leaf {
+  position: absolute; border-radius: var(--r-card);
+  background: var(--paper); border: 1px solid var(--line);
+  box-shadow: var(--shadow-card);
+  padding: 17px 19px; will-change: transform;
+  transform: translateY(var(--ly, 0px)) rotate(var(--rot, 0deg));
+}
+.leaf .file {
+  font-family: var(--mono); font-size: var(--t-nano); font-weight: 600;
+  color: var(--ink-3); letter-spacing: .02em;
+  padding-bottom: 11px; margin-bottom: 12px; border-bottom: 1px solid var(--line);
+}
+.leaf .r {
+  display: flex; align-items: baseline; gap: 9px;
+  font-size: var(--t-fine); line-height: 1.9; color: var(--ink-2);
+}
+.leaf .r b { font-weight: 700; color: var(--ink); }
+.leaf .r .when { margin-left: auto; font-family: var(--mono); font-size: var(--t-nano); color: var(--ink-3); }
+.leaf .box {
+  width: 13px; height: 13px; flex: none; border-radius: 4px;
+  border: 1.5px solid var(--hair); align-self: center;
+}
+.leaf .box.done { border-color: var(--ink-3); background: var(--ink-3); }
+.leaf .r.done b { color: var(--ink-3); text-decoration: line-through; }
+
+.leaf--due   { top: 0;    left: 62px;  width: 278px; --rot: -3.5deg; }
+.leaf--day   { top: 166px; left: 0;    width: 236px; --rot: 2.5deg; }
+.leaf--live  { top: 298px; left: 154px; width: 230px; --rot: -1.5deg; padding: 14px 16px; }
+.leaf--live .s { display: flex; align-items: center; gap: 9px; font-size: var(--t-tiny); color: var(--ink-2); line-height: 2; }
+.leaf--live .s .dot { width: 7px; height: 7px; transform: none; }
+.leaf--live .s em { font-style: normal; margin-left: auto; font-family: var(--mono); font-size: var(--t-nano); color: var(--ink-3); }
+.hero h1 {
+  font-size: var(--t-display); font-weight: 800;
+  line-height: .98; letter-spacing: -.042em;
+  max-width: 12ch; text-wrap: balance;
+}
+.hero h1 .hl { position: relative; white-space: nowrap; }
+.hero h1 .hl::before {
+  content: ""; position: absolute; inset: .08em -.09em -.02em;
+  background: var(--mark); border-radius: .09em; z-index: -1;
+  transform: skewY(-.5deg);
+}
+.hero .sub {
+  margin-top: 28px; max-width: 33em;
+  font-size: clamp(17px, 1.6vw, 20px); color: var(--ink-2); text-wrap: pretty;
+}
+.cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 15px 18px; margin-top: 36px; }
+.badges { display: flex; align-items: center; gap: 26px; margin-left: 10px; }
+.badge { font-size: var(--t-small); font-weight: 600; color: var(--ink-3); line-height: 1.35; }
+.badge b { display: block; font-weight: 800; color: var(--ink-2); }
+@media (max-width: 660px) { .badges { margin-left: 0; } }
+
+/* ══ the reel: one pinned stage, four acts ═════════════════════
+   .reel is a tall spacer. .pin sticks to the viewport and holds
+   the acts and the stage. The scroll loop writes --open, --zoom,
+   --q and friends; nothing here moves without them.           */
+
+.reel { position: relative; margin-top: clamp(44px, 6vw, 72px); }
+.pin { padding-bottom: var(--sec); }
+
+.acts { position: relative; }
+.act {
+  transform: translateY(var(--ty, 0px));
+  opacity: var(--o, 1);
+}
+.act h3 {
+  margin-top: 12px;
+  font-size: var(--t-title); font-weight: 800;
+  letter-spacing: -.035em; line-height: 1.03; text-wrap: balance;
+}
+.act p { margin-top: 12px; max-width: 42ch; color: var(--ink-2); font-size: clamp(15.5px, 1.4vw, 17px); text-wrap: pretty; }
+
+/* ── the stage: a Mac desktop at sunrise ───────────────────── */
+.stage {
+  container-type: size;
+  position: relative; width: 100%; aspect-ratio: 16 / 10;
+  border-radius: clamp(20px, 2.6vw, 34px); overflow: hidden;
+  box-shadow: var(--shadow-stage);
+  background:
+    radial-gradient(115% 90% at 16% 4%, #ffe7c8 0%, rgba(255,231,200,0) 58%),
+    linear-gradient(163deg, #f9c890 0%, #eda37c 33%, #bb8080 61%, #6a5e80 100%);
+  transform: translateY(var(--sty, 0px)) scale(var(--stsc, 1));
+  opacity: var(--stop, 1);
+  will-change: transform;
+}
+.stage::after {
+  content: "凛"; position: absolute; right: 4%; bottom: 3%;
+  font-size: 30cqw; line-height: .82; color: rgba(255,255,255,.11);
+  pointer-events: none; user-select: none;
+}
+
+/* menu bar */
+.mb {
+  position: absolute; inset: 0 0 auto; z-index: 3; height: 3.4cqw;
+  display: flex; align-items: center; gap: 2.2cqw; padding: 0 1.8cqw;
+  background: rgba(20, 14, 12, .22);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  font-size: 1.22cqw; font-weight: 500; color: rgba(255,255,255,.8);
+}
+.mb .app { font-weight: 700; color: rgba(255,255,255,.98); }
+.mb .sp { margin-left: auto; }
+.mb .glyph {
+  font-size: 1.5cqw; color: rgba(255,255,255,.92);
+  color: color-mix(in srgb, var(--amber) calc(var(--hot, 0) * 100%), rgba(255,255,255,.92));
+  transform: scale(calc(1 + var(--hot, 0) * .14));
+}
+
+/* dock */
+.dock {
+  position: absolute; left: 50%; bottom: 1.6cqw; transform: translateX(-50%);
+  display: flex; gap: .9cqw; padding: .7cqw .9cqw;
+  border-radius: 1.6cqw; background: rgba(255,255,255,.18);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 0 .09cqw rgba(255,255,255,.28);
+}
+.dock i {
+  width: 3.5cqw; height: 3.5cqw; border-radius: 1cqw; display: block;
+  background: linear-gradient(160deg, rgba(255,255,255,.55), rgba(255,255,255,.22));
+}
+/* literal colours: this tile sits inside the stage artwork, which does
+   not follow the page theme */
+.dock i.rin {
+  flex: none; overflow: hidden; background: #1c1917; color: #fff7ed;
+  display: grid; place-items: center; font-size: 2cqw; font-style: normal; line-height: 1;
+}
+
+/* the panel */
+.panel {
+  position: absolute; top: 3.4cqw; left: 50%; width: 56cqw; margin-left: -28cqw;
+  z-index: 2; background: var(--term);
+  border-radius: 0 0 1.3cqw 1.3cqw; overflow: hidden;
+  transform-origin: top center;
+  transform:
+    translateY(calc((var(--open, 1) - 1) * .8cqw))
+    scale(calc(1 + var(--zoom, 0) * .22))
+    scaleY(max(.014, var(--open, 1)));
+  opacity: clamp(0, calc(var(--open, 1) * 7), 1);
+  box-shadow: 0 .1cqw 0 rgba(0,0,0,.45), 0 3cqw 6cqw -2cqw rgba(40,15,5,.55);
+  will-change: transform;
+}
+.tabs { display: flex; align-items: center; gap: .6cqw; padding: .6cqw .75cqw; background: rgba(221,224,229,.06); }
+.tab {
+  flex: 1; position: relative; height: 2.4cqw; border-radius: 99px; min-width: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(221,224,229,.05); color: var(--band-2);
+  font-size: 1.1cqw; font-family: var(--ui);
+  transform: translateX(calc((var(--in, 1) - 1) * 2cqw));
+  opacity: var(--in, 1);
+}
+.tab .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 2cqw; }
+.tab.on { background: rgba(221,224,229,.15); color: var(--term-fg); font-weight: 600; }
+.tab .slot { position: absolute; right: .9cqw; display: flex; align-items: center; }
+.plus {
+  width: 2.2cqw; height: 2.2cqw; flex: none; border-radius: 99px;
+  display: grid; place-items: center; font-size: 1.1cqw;
+  background: rgba(221,224,229,.15); color: var(--term-fg);
+}
+.dot {
+  flex: none; width: .56cqw; height: .56cqw; border-radius: 99px; display: block;
+  transform: scale(calc(1 + var(--pop, 0) * .9));
+}
+/* These three match the app exactly: pale pulsing wants you, grey breathing is
+   still working, amber has ended. The page used to paint "wants you" amber and
+   call the hollow ring "finished", which was wrong twice out of three against
+   its own app. A legend is a promise about what you are going to see. */
+.dot.wants   { background: rgba(230,233,238,.95); animation: pulse .8s ease-in-out infinite alternate; }
+.dot.working { background: rgba(221,224,229,.6); animation: breathe 1.3s ease-in-out infinite alternate; }
+.dot.ended   { background: var(--amber); }
+@keyframes pulse   { from { opacity: .45; } to { opacity: 1; } }
+@keyframes breathe { from { opacity: .22; } to { opacity: .65; } }
+
+.body { position: relative; min-height: 26cqw; }
+.screen, .legend {
+  padding: 1.5cqw 1.9cqw 2cqw;
+  font-family: var(--mono); font-size: 1.24cqw; line-height: 1.9; color: var(--term-fg);
+}
+.legend { position: absolute; inset: 0; }
+.screen { opacity: var(--o, 1); }
+.legend { opacity: var(--o, 0); }
+.screen .u { color: var(--band-2); }
+.screen .d { color: var(--band-3); }
+.screen .g { color: var(--green); }
+.screen .ln { opacity: var(--o, 1); }
+.screen .gap { height: 1.9cqw; }
+.type { display: inline-block; overflow: hidden; white-space: nowrap; vertical-align: bottom; width: calc(var(--q, 20) * 1ch); }
+.caret {
+  display: inline-block; width: .55cqw; height: 1.3cqw; vertical-align: -.15cqw;
+  background: var(--term-fg); animation: blink 1.1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+.legend .row { display: flex; align-items: center; gap: 1.2cqw; padding: .55cqw 0; opacity: var(--o, 1); }
+.legend .row .k { width: 9ch; color: var(--term-fg); font-weight: 600; }
+.legend .row .v { color: var(--band-2); }
+.legend .cap { color: var(--band-3); margin-bottom: 1cqw; }
+.legend .tail { margin: 1.4cqw 0 0; opacity: var(--o, 1); }
+
+/* ── the pair of wide cards ────────────────────────────────── */
+.pair { display: grid; grid-template-columns: 1.35fr 1fr; gap: 20px; padding-top: var(--sec); }
+@media (max-width: 860px) { .pair { grid-template-columns: 1fr; } }
+.card {
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+  background: var(--paper); border: 1px solid var(--line);
+  border-radius: var(--r-card); padding: 32px 34px 0;
+  box-shadow: var(--shadow-card);
+}
+.card h3 { font-size: var(--t-card); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; text-wrap: balance; }
+.card p { margin-top: 11px; color: var(--ink-2); font-size: var(--t-ui); max-width: 34ch; }
+.card .art { margin-top: 26px; }
+
+.tree { font-family: var(--mono); font-size: var(--t-fine); line-height: 2; color: var(--ink); padding-bottom: 30px; }
+.tree i { color: var(--hair); font-style: normal; }
+.tree b { font-weight: 700; }
+.tree span { color: var(--ink-3); }
+
+.lockart { flex: 1; display: grid; place-items: center; padding: 10px 0 34px; }
+.lockart svg { width: 96px; height: 96px; stroke: var(--ink); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ── bento ─────────────────────────────────────────────────── */
+.bento-head { padding-top: var(--sec); }
+.bento-head h2 {
+  margin-top: 12px; max-width: 16ch;
+  font-size: var(--t-title); font-weight: 800; letter-spacing: -.035em; line-height: 1.03;
+}
+.bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; }
+@media (max-width: 860px) { .bento { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .bento { grid-template-columns: 1fr; } }
+.tile {
+  background: var(--cream-2); border-radius: var(--r-card); padding: 26px 26px 28px;
+  transition: transform .55s var(--boing), background .3s var(--settle);
+}
+.tile:hover { transform: translateY(-3px); background: #f3e5d1; }
+.tile svg { width: 40px; height: 40px; stroke: var(--ink); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.tile h3 { margin-top: 18px; font-size: var(--t-tile); font-weight: 800; letter-spacing: -.02em; line-height: 1.2; }
+.tile p { margin-top: 8px; font-size: var(--t-small); color: var(--ink-2); }
+.kbd {
+  display: inline-flex; gap: 5px; margin-top: 18px;
+  font-family: var(--mono); font-size: var(--t-fine); font-weight: 600; color: var(--ink-2);
+}
+.kbd b { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-chip); padding: 4px 9px; font-weight: 600; }
+
+/* ── questions ─────────────────────────────────────────────── */
+/* One column of questions beside a heading that stays put. Two columns
+   of collapsibles would leave a hole in one whenever the other opened. */
+.faq {
+  padding-top: var(--sec);
+  display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px 64px; align-items: start;
+}
+@media (max-width: 900px) { .faq { grid-template-columns: 1fr; gap: 34px; } }
+.faq-head { position: sticky; top: 104px; }
+.faq-head h2 {
+  margin-top: 12px; max-width: 13ch;
+  font-size: var(--t-title); font-weight: 800; letter-spacing: -.035em; line-height: 1.03;
+}
+.q { border-top: 1px solid var(--line); }
+.q:last-child { border-bottom: 1px solid var(--line); }
+.q summary {
+  display: flex; align-items: flex-start; gap: 16px; cursor: pointer;
+  padding: 20px 0; font-size: var(--t-body); font-weight: 700; letter-spacing: -.015em;
+  list-style: none; color: var(--ink);
+}
+.q summary::-webkit-details-marker { display: none; }
+.q summary::after {
+  content: ""; flex: none; margin-left: auto; margin-top: 8px;
+  width: 12px; height: 12px;
+  background:
+    linear-gradient(var(--ink-3) 0 0) center / 100% 1.8px no-repeat,
+    linear-gradient(var(--ink-3) 0 0) center / 1.8px 100% no-repeat;
+  transition: transform .4s var(--boing), background-size .3s var(--settle);
+}
+.q[open] summary::after { transform: rotate(180deg); background-size: 100% 1.8px, 1.8px 0; }
+.q summary:hover::after { background-image: linear-gradient(var(--ink) 0 0), linear-gradient(var(--ink) 0 0); }
+.q code { font-family: var(--mono); font-size: .92em; background: var(--cream-2); border-radius: var(--r-code); padding: 2px 6px; }
+.q p { padding: 0 40px 24px 0; font-size: var(--t-ui); color: var(--ink-2); max-width: 54ch; }
+
+/* ── the two honest notes ──────────────────────────────────── */
+.notes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding-top: var(--sec); }
+@media (max-width: 800px) { .notes { grid-template-columns: 1fr; } }
+.note { border: 1px dashed color-mix(in srgb, var(--ink-3) 55%, transparent); border-radius: var(--r-card); padding: 24px 26px; }
+.note h3 { font-size: var(--t-copy); font-weight: 800; }
+.note p { margin-top: 9px; font-size: var(--t-small); color: var(--ink-2); line-height: 1.6; }
+
+/* ── closing ask ───────────────────────────────────────────── */
+.cta2 { display: flex; flex-direction: column; align-items: center; gap: 24px; padding: var(--sec) 0 10px; text-align: center; }
+.cta2 h2 { font-size: var(--t-title); font-weight: 800; letter-spacing: -.035em; line-height: 1.03; max-width: 14ch; text-wrap: balance; }
+.cta2 .btn { padding: 17px 32px; font-size: var(--t-body); }
+.chips { display: flex; gap: 12px; }
+.chip-link {
+  width: 44px; height: 44px; border-radius: var(--r-tile); display: grid; place-items: center;
+  background: var(--cream-2); color: var(--ink-2);
+  transition: transform .55s var(--boing), color .2s var(--settle);
+}
+.chip-link:hover { transform: translateY(-2px) scale(1.06); color: var(--ink); }
+.chip-link svg { width: 20px; height: 20px; fill: currentColor; }
+
+/* ── giant fading wordmark foot ────────────────────────────── */
+.foot { position: relative; overflow: hidden; text-align: center; padding-top: clamp(48px, 6vw, 82px); }
+.foot .giant {
+  font-size: clamp(150px, 26vw, 340px); font-weight: 400; line-height: 1.32;
+  user-select: none; pointer-events: none; margin-bottom: -.2em;
+  background: linear-gradient(180deg, var(--wordmark) 6%, transparent 90%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.foot .cols {
+  position: relative; display: grid; gap: 34px 24px;
+  grid-template-columns: 1.4fr repeat(3, 1fr);
+  text-align: left; padding-bottom: 44px;
+  border-top: 1px solid var(--line); padding-top: 44px;
+}
+@media (max-width: 760px) { .foot .cols { grid-template-columns: 1fr 1fr; } }
+.foot .about { max-width: 30ch; }
+.foot .about .mark { margin-bottom: 14px; }
+.foot .about p { font-size: var(--t-small); color: var(--ink-3); line-height: 1.6; }
+.foot h2 {
+  font-size: var(--t-tiny); font-weight: 800; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 14px;
+}
+.foot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.foot ul a, .foot ul span { font-size: var(--t-ui); font-weight: 600; color: var(--ink-2); }
+.foot ul span { color: var(--ink-3); }
+.foot ul a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.foot .fine {
+  position: relative; display: flex; flex-wrap: wrap; gap: 8px 20px;
+  justify-content: space-between; padding: 0 0 40px;
+  font-size: var(--t-fine); color: var(--ink-3);
+}
+
+/* ── entrances ─────────────────────────────────────────────── */
+.rise { animation: riseIn .9s var(--settle) both; }
+.d2 { animation-delay: .07s; } .d3 { animation-delay: .15s; } .d4 { animation-delay: .25s; }
+@keyframes riseIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+.up { opacity: 0; transform: translateY(26px); transition: opacity .8s var(--settle), transform .8s var(--boing); }
+.up.in { opacity: 1; transform: none; }
+
+/* ══ motion mode ══════════════════════════════════════════════
+   Only added when the viewport is wide enough to hold the stage
+   and the reader has not asked for less motion. Everything above
+   is written so that the page reads correctly without it.     */
+
+html.motion .reel { height: calc(var(--len, 3800px) + 100vh); }
+html.motion .pin {
+  position: sticky; top: 0; height: 100vh;
+  padding: 78px 0 clamp(16px, 3vh, 40px);
+  display: grid; grid-template-rows: 1fr auto;
+  gap: clamp(14px, 2.4vh, 30px);
+}
+html.motion .acts { align-self: end; }
+html.motion .act { position: absolute; inset: auto 0 0; }
+html.motion .act:first-child { position: relative; }
+html.motion .act p { max-width: 40ch; }
+/* the stage takes the width it can while leaving the captions their room */
+html.motion .stage { width: min(100%, calc((100vh - 300px) * 1.6)); margin-inline: auto; }
+html.motion .panel { --open: 0; }
+html.motion .type { --q: 0; }
+html.motion .screen .ln, html.motion .tab, html.motion .dot { --o: 0; --in: 0; }
+
+/* Without the pinned stage there is no reason to read four headings
+   before seeing the one picture they all describe. The stage comes
+   first, then the four points sit under it as a plain grid. */
+html:not(.motion) .pin { display: flex; flex-direction: column; padding-bottom: 0; }
+html:not(.motion) .stage { order: -1; }
+html:not(.motion) .acts {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 44px 34px; margin-top: clamp(40px, 5vw, 64px);
+}
+html:not(.motion) .act h3 { font-size: var(--t-card); }
+html:not(.motion) .act p { max-width: 46ch; }
+html:not(.motion) .legend { display: none; }
+@media (max-width: 700px) { html:not(.motion) .acts { grid-template-columns: 1fr; gap: 36px; } }
+
+/* on a phone the fake desktop would shrink past readable, so the desktop
+   goes and the panel stands on its own at a real type size */
+@media (max-width: 760px) {
+  .stage {
+    container-type: normal; aspect-ratio: auto;
+    background: none; box-shadow: none; border-radius: 0;
+  }
+  .mb, .dock, .stage::after { display: none; }
+  .panel {
+    position: static; width: 100%; margin: 0;
+    border-radius: 18px; transform: none; opacity: 1;
+    box-shadow: var(--shadow-stage);
+  }
+  .tabs { gap: 6px; padding: 7px 8px; }
+  .tab { height: 30px; font-size: 13px; transform: none; opacity: 1; }
+  .tab .t { padding: 0 22px; }
+  .tab .slot { right: 10px; }
+  .plus { width: 26px; height: 26px; font-size: 12px; }
+  .dot { width: 7px; height: 7px; transform: none; }
+  .body { min-height: 0; }
+  .screen { padding: 16px 18px 20px; font-size: 13px; }
+  .screen .gap { height: 18px; }
+  .caret { width: 6px; height: 14px; vertical-align: -2px; }
+}
+
+/* ══ dark, the parts that are not tokens ═══════════════════════
+   The palette itself lives with the tokens at the top. What is
+   left here is every rule that competes with a real rule and so
+   has to sit after it. The stage keeps its sunrise wallpaper in
+   both schemes, since it is a picture of a desktop rather than
+   part of the page surface. */
+
+@media (prefers-color-scheme: dark) {
+  /* a fill alone disappears on a dark canvas; these need an edge */
+  .stage, .panel { box-shadow: var(--shadow-stage), 0 0 0 1px rgba(245,237,226,.08); }
+  .card { background: var(--paper); }
+  .tile:hover { background: #2c251f; }
+  .kbd b { background: #100d0b; }
+  .btn--beige:hover { filter: brightness(1.14); }
+  .nav .quiet:hover, .foot ul a:hover, .chip-link:hover { color: var(--ink); }
+}
+
+/* no script, no reveal observer, so nothing may start hidden */
+.no-js .up { opacity: 1; transform: none; }
+
+/* ── print ─────────────────────────────────────────────────────
+   Rewritten 2026-08-08 against the first real print render this page has
+   ever had. Until then only the fact that the rules PARSED was known, and
+   three of them were wrong in ways a preview shows in a second. */
+@media print {
+  .nav, .skip, .hero-art, .stage, .foot .giant { display: none !important; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  .hero { padding-top: 0; }
+  .hero-in { opacity: 1 !important; transform: none !important; }
+  .reel { height: auto !important; }
+  .pin { position: static !important; height: auto !important; padding: 0 !important; display: block !important; }
+  .acts { display: block !important; }
+  .act { position: static !important; opacity: 1 !important; transform: none !important; page-break-inside: avoid; margin-bottom: 18pt; }
+  .up { opacity: 1 !important; transform: none !important; }
+  .card, .tile, .note, .q { page-break-inside: avoid; }
+
+  /* The FAQ folds shut, and it printed as a list of questions with no
+     answers on it. Nothing folds on paper, so every answer is unfolded and
+     the little plus that promised the fold goes with it. Two rules because
+     browsers hid a closed details two different ways and both are still in
+     the wild. */
+  .q::details-content { content-visibility: visible !important; block-size: auto !important; }
+  .q > *:not(summary) { display: block !important; }
+  .q summary { cursor: auto; }
+  .q summary::after { display: none !important; }
+
+  /* Every shadow prints as a grey smear, and the one under the black button
+     came out a filled rectangle wide enough to run over the badges beside it.
+     Four selectors used to carry this rule; the page has more than four. */
+  * { box-shadow: none !important; }
+
+  /* A filled button is a slab of ink for something nobody can click. On paper
+     it becomes what it actually is: a label, outlined, at text weight. */
+  .btn {
+    background: none !important;
+    color: #000 !important;
+    border: 1pt solid #000;
+    padding: 6pt 10pt;
+    font-size: 10pt;
+  }
+  .btn .chip { background: none !important; border: .5pt solid #666; }
+  .cta-row { display: block !important; margin-top: 18pt; }
+  .cta-row .btn, .cta2 .btn { display: inline-block; margin: 0 8pt 8pt 0; }
+  .badges { display: block !important; margin-left: 0 !important; }
+  .badge { margin-top: 6pt; }
+
+  /* Addresses belong in ONE place. Printed after every link they turned each
+     button into a column five characters wide, and on the two icon-only links
+     at the bottom the address WAS the entire content, so it broke out of its
+     own section and landed on top of the footer a page later. They print in
+     the footer list instead, each on its own line, which is the reference list
+     somebody holding the paper actually wants. */
+  a[href^="http"]::after { content: none; }
+  .foot ul a[href^="http"]::after {
+    content: "\A" attr(href);
+    white-space: pre-wrap;
+    font-size: .78em;
+    font-weight: 400;
+    color: #444;
+    overflow-wrap: anywhere;
+  }
+  .foot .cols { grid-template-columns: 1fr 1fr !important; gap: 20pt !important; }
+  .chips { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .001ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+  .up { opacity: 1 !important; transform: none !important; }
+}
+</style>
+<noscript><style>.up { opacity: 1 !important; transform: none !important; }</style></noscript>
+</head>
+<body class="no-js">
+
+<a class="skip" href="#top">Skip to content</a>
+
+<nav class="nav" id="nav" aria-label="Main">
+  <a class="mark" href="#top"><span class="sq">凛</span> Rin</a>
+  <div class="right">
+    <a class="quiet" href="modules.html">Modules</a>
+    <a class="quiet opt" href="https://github.com/exata531/Rin">Source</a>
+    <a class="btn btn--beige" href="https://github.com/exata531/Rin/releases">Download for Mac</a>
+  </div>
+</nav>
+
+<main id="top" tabindex="-1">
+  <div class="wrap">
+
+    <header class="hero">
+      <div class="hero-art" id="heroArt" aria-hidden="true">
+        <div class="leaf leaf--due" data-leaf="0">
+          <div class="file">areas/school/assignments.md</div>
+          <div class="r"><b>Bio</b> lab writeup <span class="when">thu</span></div>
+          <div class="r"><b>History</b> reading response <span class="when">thu</span></div>
+          <div class="r"><b>Calc</b> problem set 7 <span class="when">mon</span></div>
+        </div>
+
+        <div class="leaf leaf--day" data-leaf="1">
+          <div class="file">daily/2026-07-29.md</div>
+          <div class="r done"><span class="box done"></span><b>morning run</b></div>
+          <div class="r"><span class="box"></span><b>essay outline</b></div>
+          <div class="r"><span class="box"></span><b>email Mr. Vance</b></div>
+        </div>
+
+        <div class="leaf leaf--live" data-leaf="2">
+          <div class="s"><span class="dot working"></span> vault <em>working</em></div>
+          <div class="s"><span class="dot wants"></span> essay <em>wants you</em></div>
+          <div class="s"><span class="dot ended"></span> rin <em>ended</em></div>
+        </div>
+      </div>
+
+      <div class="hero-in" id="heroIn">
+        <h1 class="rise">An assistant that <span class="hl">knows</span> your whole life</h1>
+        <p class="sub rise d2">
+          Rin gives your Mac a second brain and drops it down from the menu bar whenever
+          you need it. You answer three questions on first run, and from then on it just
+          knows your stuff: your deadlines, your projects, your week.
+        </p>
+        <div class="cta-row rise d3">
+          <a class="btn btn--black" href="https://github.com/exata531/Rin/releases">Download for Mac</a>
+          <a class="btn btn--beige" href="https://github.com/exata531/Rin">Source <span class="chip">Free</span></a>
+          <div class="badges">
+            <span class="badge"><b>Open source</b> MIT licensed</span>
+            <span class="badge"><b>Private</b> stays on your disk</span>
+            <span class="badge"><b>macOS 14+</b> plus a Claude Code plan</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ══ the reel ══════════════════════════════════════════ -->
+    <section class="reel" id="reel" aria-labelledby="reel-title">
+      <h2 class="sr" id="reel-title">How Rin works</h2>
+      <div class="pin">
+
+        <div class="acts" id="acts">
+          <article class="act">
+            <p class="eyebrow">Drop</p>
+            <h3>It lives in the menu bar</h3>
+            <p>Control and backtick. It drops down over whatever you're doing, and gets
+              out of the way just as fast.</p>
+          </article>
+
+          <article class="act">
+            <p class="eyebrow">Ask</p>
+            <h3>It already knows your week</h3>
+            <p>Nothing to explain, no notes to paste in. It's read the folder before you
+              even open the panel, so the first thing you type can be a real
+              question.</p>
+          </article>
+
+          <article class="act">
+            <p class="eyebrow">Read</p>
+            <h3>One dot says who needs you</h3>
+            <p>A pale dot pulsing wants an answer, a grey one breathing is still working,
+              amber has ended. A hollow ring hasn't started yet. You read the whole
+              panel in half a second.</p>
+          </article>
+
+          <article class="act">
+            <p class="eyebrow">Keep</p>
+            <h3>Quit. It's all still there</h3>
+            <p>Close the app, restart the Mac, come back in a week. Every tab reopens
+              right where you left it.</p>
+          </article>
+        </div>
+
+        <p class="sr">
+          The illustration alongside shows a Mac desktop. Rin's panel drops down out of the
+          menu bar carrying three session tabs named vault, essay and rin. The question
+          "what is due thursday" is typed, and the answer comes back: bio lab writeup and
+          the history reading response, with the writeup named as the one that eats the
+          evening. Each tab carries a status dot. The app then quits and reopens with the
+          same conversation still on screen.
+        </p>
+
+        <div class="stage" id="stage" aria-hidden="true">
+          <div class="mb">
+            <span class="app">Safari</span>
+            <span class="hide-s">File</span><span class="hide-s">Edit</span><span class="hide-s">View</span>
+            <span class="sp"></span>
+            <span>100%</span>
+            <span class="glyph" id="glyph">凛</span>
+            <span>Tue 9:41</span>
+          </div>
+
+          <div class="dock" aria-hidden="true">
+            <i></i><i></i><i class="rin">凛</i><i></i><i></i>
+          </div>
+
+          <div class="panel" id="panel">
+            <div class="tabs">
+              <div class="tab on" data-tab><span class="t">vault</span><span class="slot"><span class="dot working" data-dot></span></span></div>
+              <div class="tab" data-tab><span class="t">essay</span><span class="slot"><span class="dot wants" data-dot></span></span></div>
+              <div class="tab" data-tab><span class="t">rin</span><span class="slot"><span class="dot ended" data-dot></span></span></div>
+              <span class="plus" aria-hidden="true">+</span>
+            </div>
+
+            <div class="body">
+              <div class="screen" id="screen">
+                <div class="u">&gt; <span class="type" id="type">what is due thursday</span><span class="caret" id="caret"></span></div>
+                <div class="gap"></div>
+                <div class="ln" data-ln>bio lab writeup and the history reading</div>
+                <div class="ln" data-ln>response. that's the whole list.</div>
+                <div class="gap"></div>
+                <div class="ln" data-ln>the writeup is the one that eats your</div>
+                <div class="ln" data-ln>evening, so start there.</div>
+                <div class="gap"></div>
+                <div class="ln d" data-ln>&gt; <span class="caret"></span></div>
+              </div>
+
+              <div class="legend" id="legend">
+                <div class="cap">three sessions, three states</div>
+                <div class="row" data-row><span class="dot wants"></span><span class="k">pale</span><span class="v">it asked you something</span></div>
+                <div class="row" data-row><span class="dot working"></span><span class="k">grey</span><span class="v">still working, leave it alone</span></div>
+                <div class="row" data-row><span class="dot ended"></span><span class="k">amber</span><span class="v">that session has ended</span></div>
+                <div class="cap tail" data-row>close the panel. the grey one keeps going without you.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ the pair ══════════════════════════════════════════ -->
+    <section class="pair" aria-labelledby="pair-title">
+      <h2 class="sr" id="pair-title">What you get</h2>
+      <div class="card up">
+        <h3>The brain ships built</h3>
+        <p>The folders and the daily rhythm arrive ready and empty. Nothing to name,
+          nothing to design. You just talk and it files things where they go.</p>
+        <div class="art tree">
+          <div><b>brain/</b></div>
+          <div><i>├──</i> inbox <span>anything you say in passing</span></div>
+          <div><i>├──</i> projects <span>the things with an end</span></div>
+          <div><i>├──</i> areas <span>school, work, the ongoing stuff</span></div>
+          <div><i>├──</i> resources <span>things you did not write</span></div>
+          <div><i>├──</i> daily <span>one note a day, written for you</span></div>
+          <div><i>└──</i> archive <span>done, and out of the way</span></div>
+        </div>
+      </div>
+
+      <div class="card up">
+        <h3>Rin has nowhere to send it</h3>
+        <p>No server, no account, no sync. The brain is a folder on your disk you can
+          open with any text editor. A module you add can change that, which is why
+          every module's card says whether it reaches the network.</p>
+        <div class="art lockart" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="10" rx="3"/><path d="M8 10.5V7.6a4 4 0 0 1 8 0v2.9"/><circle cx="12" cy="15.5" r="1.1"/></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ bento ═════════════════════════════════════════════ -->
+    <section aria-labelledby="bento-title">
+      <div class="bento-head up">
+        <p class="eyebrow">The rest of it</p>
+        <h2 id="bento-title">Small things that make it worth keeping open</h2>
+      </div>
+
+      <div class="bento">
+      <div class="tile up">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="9.5" width="17" height="10" rx="2.5"/><path d="M6 6.5h12M8 3.5h8"/></svg>
+        <h3>Tabs that outlive the app</h3>
+        <p>Every session is on disk as it goes, and a tab still working won't let you close it on a stray click.</p>
+      </div>
+      <div class="tile up">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5c0-1.4 1.1-2.5 2.5-2.5h3l2 2.5h6c1.4 0 2.5 1.1 2.5 2.5v7c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 19.5 4 18.4 4 17z"/><path d="M8.5 13h7M8.5 16h4.5"/></svg>
+        <h3>One brain, many windows</h3>
+        <p>Every tab reads the same notes. Ask in one, and the next one already knows.</p>
+      </div>
+      <div class="tile up">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.6 14.4 14.4 9.6"/><path d="M11.4 7.8 13 6.2a3.7 3.7 0 0 1 5.2 5.2l-1.6 1.6"/><path d="M12.6 16.2 11 17.8a3.7 3.7 0 0 1-5.2-5.2l1.6-1.6"/></svg>
+        <h3>Starts blind, on purpose</h3>
+        <p>It sees your notes and nothing else until you say "connect my calendar". One thing at a time, explained first.</p>
+      </div>
+      <div class="tile up">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 4.5 6.6v5c0 4.3 3.1 7.6 7.5 8.9 4.4-1.3 7.5-4.6 7.5-8.9v-5z"/><path d="M9.3 12.1l1.9 1.9 3.6-3.9"/></svg>
+        <h3>Readable line by line</h3>
+        <p>MIT licensed and small enough to actually read before you trust it with your week.</p>
+      </div>
+      <div class="tile up">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><path d="M3.5 9.2h17M7.5 13.4h5"/></svg>
+        <h3>Never covers your work</h3>
+        <p>It hangs off the menu bar over the top of anything, then leaves without moving a window.</p>
+      </div>
+      <div class="tile up">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <h3>Two keys, always</h3>
+        <p>The same shortcut from any app, any desktop, any full screen video.</p>
+        <div class="kbd"><b>Control</b><b>`</b></div>
+      </div>
+      </div>
+    </section>
+
+
+    <!-- ══ questions ═════════════════════════════════════════ -->
+    <section class="faq" aria-labelledby="faq-title">
+      <div class="faq-head up">
+        <p class="eyebrow">Before you ask</p>
+        <h2 id="faq-title">Questions you probably have</h2>
+      </div>
+
+      <div class="qs">
+        <details class="q up">
+          <summary>Is this just a wrapper around Claude Code?</summary>
+          <p>Partly, and it says so on the tin. Claude Code is the engine. What Rin adds
+            is the panel falling out of the menu bar, tabs that survive quitting, and a
+            brain that already exists on first launch instead of an empty folder you
+            have to figure out yourself.</p>
+        </details>
+
+        <details class="q up">
+          <summary>Where do my notes actually live?</summary>
+          <p>In a plain folder of markdown files on your disk, wherever you put it. Open it
+            in Finder. Edit it in any text editor. Put it in iCloud or under git if you
+            like. Nothing about it is locked to this app.</p>
+        </details>
+
+        <details class="q up">
+          <summary>Does it work with Obsidian?</summary>
+          <p>Yes. The brain is markdown with wikilinks between the notes, which is exactly
+            what Obsidian reads. Point a vault at the same folder and both see the same
+            files.</p>
+        </details>
+
+        <details class="q up">
+          <summary>Can I point it at a folder I already have?</summary>
+          <p>Yes. If you already keep notes somewhere, give it that folder instead and it
+            works with what's there. The starter structure is a convenience, not a
+            requirement.</p>
+        </details>
+
+        <details class="q up">
+          <summary>What does it cost?</summary>
+          <p>Rin is free and MIT licensed, and it always will be. Claude Code isn't, so
+            you need a plan that covers it. That's the only bill involved, and Rin
+            doesn't see a cent of it.</p>
+        </details>
+
+        <details class="q up">
+          <summary>What can it see on my Mac?</summary>
+          <p>Your brain folder, plus Claude's own session files in <code>~/.claude</code>,
+            which is how tabs come back labelled after a quit. That's it. It starts with
+            no access to your calendar, mail or anything else until you ask, one
+            connection at a time, and Rin has no server to send any of it to. Modules
+            are the one exception worth knowing: one you add can ship scripts or talk
+            to a service of its own, and the <a href="modules.html">modules page</a>
+            says which do.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- ══ the honest notes ══════════════════════════════════ -->
+    <section class="notes" aria-labelledby="notes-title">
+      <h2 class="sr" id="notes-title">Before you download</h2>
+      <div class="note up">
+        <h3>Bring a plan that covers Claude Code</h3>
+        <p>Rin is the window, Claude Code is what runs in it. Every tab is a real
+          session spending real usage, so bring a subscription that covers it. On
+          pay as you go, a few open tabs will drain your balance fast.</p>
+      </div>
+      <div class="note up">
+        <h3>About that first launch warning</h3>
+        <p>Rin isn't signed with a paid certificate (that costs about a hundred bucks a
+          year and this app is free, so, no), which means the first launch gets blocked
+          and you have to wave it through by hand. Once, and never again.</p>
+        <p>Double click Rin and let the warning appear. Press <strong>Done</strong>, not
+          Move to Trash. Then open System Settings, go to
+          Privacy&nbsp;&amp;&nbsp;Security, and scroll to the bottom: there's a line
+          saying Rin was blocked, with an <strong>Open Anyway</strong> button beside it.
+          Click it and confirm with your password or Touch&nbsp;ID. Rin opens, and every
+          launch after this one is an ordinary double click.</p>
+        <p>On a Mac older than macOS&nbsp;15 there is a shortcut: right click the app,
+          choose Open, then Open again. Apple retired that route in Sequoia.</p>
+        <p>A signature tells you who wrote an app, not what it does. The source tells you
+          what it does.</p>
+      </div>
+    </section>
+
+    <section class="cta2">
+      <h2 class="up">Give your Mac a memory</h2>
+      <a class="btn btn--black up" href="https://github.com/exata531/Rin/releases">Download for Mac</a>
+      <div class="chips up">
+        <a class="chip-link" href="https://github.com/exata531/Rin" aria-label="Source on GitHub">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        </a>
+        <a class="chip-link" href="https://github.com/exata531/Rin/issues" aria-label="Report an issue">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 2.4 1.2 4.5 3 5.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3c1.8-1.2 3-3.3 3-5.7a7 7 0 0 0-7-7zM10 21h4v1a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"/></svg>
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div class="cols">
+        <div class="about">
+          <div class="mark"><span class="sq" aria-hidden="true">凛</span> Rin</div>
+          <p>A Claude brain wrapped in an app. Made by one person, given away.</p>
+        </div>
+
+        <nav aria-labelledby="f-get">
+          <h2 id="f-get">Get it</h2>
+          <ul>
+            <li><a href="https://github.com/exata531/Rin/releases">Download for Mac</a></li>
+            <li><a href="modules.html">Modules</a></li>
+            <li><a href="https://github.com/exata531/Rin/blob/main/docs/first-run.md">First run guide</a></li>
+          </ul>
+        </nav>
+
+        <nav aria-labelledby="f-code">
+          <h2 id="f-code">The code</h2>
+          <ul>
+            <li><a href="https://github.com/exata531/Rin">Source on GitHub</a></li>
+            <li><a href="https://github.com/exata531/Rin/blob/main/docs/modules.md">Write a module</a></li>
+            <li><a href="https://github.com/exata531/Rin/blob/main/CHANGELOG.md">What changed</a></li>
+            <li><a href="https://github.com/exata531/Rin/issues">Something broke</a></li>
+          </ul>
+        </nav>
+
+        <nav aria-labelledby="f-need">
+          <h2 id="f-need">You will need</h2>
+          <ul>
+            <li><span>macOS 14 or newer</span></li>
+            <li><a href="https://claude.com/product/claude-code">Claude Code</a></li>
+            <li><span>A plan that covers it</span></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="fine">
+        <span>Not affiliated with Anthropic. Claude and Claude Code are their trademarks.</span>
+        <span>MIT licensed. Use it however you like.</span>
+      </div>
+    </div>
+
+    <div class="giant" aria-hidden="true">凛</div>
+  </footer>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  document.body.classList.remove('no-js');
+
+  /* ── small math ─────────────────────────────────────────── */
+  var clamp = function (v, a, b) { return v < a ? a : v > b ? b : v; };
+  var span  = function (v, a, b) { return a === b ? (v < a ? 0 : 1) : clamp((v - a) / (b - a), 0, 1); };
+  var mix   = function (a, b, t) { return a + (b - a) * t; };
+
+  var outCubic  = function (t) { return 1 - Math.pow(1 - t, 3); };
+  var inCubic   = function (t) { return t * t * t; };
+  var inOut     = function (t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+  /* a spring with a small overshoot, the curve the app itself opens on */
+  var spring    = function (t) { var c = .62; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+
+  /* piecewise keyframes: track(y, [[at, value], ...], easing) */
+  function track(y, ks, ease) {
+    if (y <= ks[0][0]) return ks[0][1];
+    for (var i = 1; i < ks.length; i++) {
+      if (y <= ks[i][0]) {
+        var a = ks[i - 1], b = ks[i];
+        var t = b[0] === a[0] ? 1 : (y - a[0]) / (b[0] - a[0]);
+        return a[1] + (b[1] - a[1]) * (ease ? ease(t) : t);
+      }
+    }
+    return ks[ks.length - 1][1];
+  }
+
+  var el  = function (id) { return document.getElementById(id); };
+  var all = function (sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); };
+  var set = function (node, prop, v) { if (node) node.style.setProperty(prop, v); };
+
+  /* ── the sections after the reel just rise in ───────────── */
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduced && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        /* index within its own container, so a grid row staggers across
+           itself rather than against everything else on the page */
+        var sibs = [].filter.call(e.target.parentNode.children, function (n) {
+          return n.classList.contains('up');
+        });
+        e.target.style.transitionDelay = ((sibs.indexOf(e.target) % 3) * 70) + 'ms';
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: .12 });
+    all('.up').forEach(function (n) { io.observe(n); });
+    setTimeout(function () { all('.up').forEach(function (n) { n.classList.add('in'); }); }, 5000);
+  } else {
+    all('.up').forEach(function (n) { n.classList.add('in'); });
+  }
+
+  /* ── nav frost ──────────────────────────────────────────── */
+  var nav = el('nav');
+  function frost() { nav.classList.toggle('solid', window.scrollY > 14); }
+  frost();
+  addEventListener('scroll', frost, { passive: true });
+
+  /* ── the reel ───────────────────────────────────────────── */
+  var wide = matchMedia('(min-width: 900px) and (min-height: 620px)');
+  var reel   = el('reel'),
+      stage  = el('stage'),
+      panel  = el('panel'),
+      glyph  = el('glyph'),
+      screen = el('screen'),
+      legend = el('legend'),
+      type   = el('type'),
+      caret  = el('caret'),
+      heroIn = el('heroIn'),
+      heroArt = el('heroArt'),
+      leaves = all('#heroArt [data-leaf]'),
+      acts   = all('#acts .act'),
+      tabs   = all('#panel [data-tab]'),
+      dots   = all('#panel .tabs [data-dot]'),
+      lines  = all('#screen [data-ln]'),
+      rows   = all('#legend [data-row]');
+
+  var LEN = 3800;                       /* pixels of scroll the reel owns */
+  var QLEN = type.textContent.length;   /* characters in the typed question */
+
+  /* four acts, evenly spaced, each fading through the one before it */
+  var WIN = [[0, 900], [900, 1900], [1900, 2820], [2820, LEN]];
+
+  function paint(y) {
+    /* Captions. Windows are wide and symmetric on purpose: a caption that
+       swaps inside one wheel tick reads as a cut, not a transition. The
+       incoming one starts before the outgoing one is gone so the two
+       genuinely cross rather than leaving a blank beat between them. */
+    acts.forEach(function (a, i) {
+      var w = WIN[i], last = i === acts.length - 1;
+      var enter = i === 0 ? 1 : inOut(span(y, w[0] - 100, w[0] + 220));
+      var leave = inOut(last ? span(y, LEN - 150, LEN) : span(y, w[1] - 280, w[1]));
+      set(a, '--ty', mix(64, 0, enter) - mix(0, 56, leave) + 'px');
+      set(a, '--o', enter * (1 - leave));
+    });
+
+    /* the stage: settles a touch, then hands off at the end */
+    var bye = span(y, LEN - 120, LEN);
+    set(stage, '--stsc', mix(1, .972, outCubic(span(y, 0, LEN * .45))) * mix(1, .962, inCubic(bye)));
+    set(stage, '--sty', mix(0, -30, inCubic(bye)) + 'px');
+    set(stage, '--stop', 1 - bye * .35);
+
+    /* act one: the glyph warms, the panel unrolls, the tabs arrive.
+       act four: it rolls back up and comes down carrying the same three. */
+    set(glyph, '--hot', track(y, [[20, 0], [130, 1], [2980, 1], [3100, 0], [3300, 0], [3420, 1]]));
+
+    /* Three separate curves rather than one keyframe track, because the
+       three motions do not share an easing. Opening springs, which is what
+       the app really does. Closing must not: a spring on the way shut puts
+       most of the collapse into the first few pixels of scroll and the
+       panel simply vanishes between two wheel ticks. */
+    var open =
+      spring(span(y, 70, 570)) * (1 - inOut(span(y, 2980, 3240)))
+      + spring(span(y, 3320, 3600));
+    set(panel, '--open', clamp(open, 0, 1.06));
+
+    tabs.forEach(function (t, i) {
+      set(t, '--in', outCubic(span(y, 300 + i * 85, 570 + i * 85)));
+    });
+
+    /* act two: the question types itself, the answer lands line by line */
+    set(type, '--q', Math.round(track(y, [[960, 0], [1400, QLEN]])));
+    var answered = span(y, 1440, 1520);
+    set(caret, 'opacity', 1 - answered);
+    lines.forEach(function (l, i) {
+      set(l, '--o', span(y, 1450 + i * 60, 1600 + i * 60));
+    });
+
+    /* act three: the panel leans in and the dots explain themselves */
+    var zoom = track(y, [[1940, 0], [2300, 1], [2700, 1], [2940, 0]], inOut);
+    set(panel, '--zoom', zoom);
+    set(screen, '--o', 1 - zoom);
+    set(legend, '--o', zoom);
+    dots.forEach(function (d, i) {
+      set(d, '--pop', track(y, [[2120 + i * 90, 0], [2340 + i * 90, 1], [2700, 1], [2940, 0]], spring));
+    });
+    rows.forEach(function (r, i) {
+      set(r, '--o', span(y, 2200 + i * 90, 2380 + i * 90) * (1 - span(y, 2740, 2920)));
+    });
+  }
+
+  /* the hero eases away on its own, above the reel. The cluster leaves
+     drift at their own rates so the group opens up as it leaves. */
+  /* Keyed to the hero's own height, not to fixed pixels: the fade has to
+     finish as the hero leaves the top of the window, not while its buttons
+     are still sitting in the middle of the screen. */
+  var LEAF_RATE = [.30, .46, .62], heroH = 800;
+  function hero() {
+    var y = window.scrollY;
+    set(heroIn, '--hy', (-y * .16) + 'px');
+    set(heroIn, '--ho', 1 - span(y, heroH * .34, heroH * .92) * .88);
+    if (!heroArt) return;
+    set(heroArt, '--ao', 1 - span(y, heroH * .2, heroH * .78) * .95);
+    leaves.forEach(function (l, i) { set(l, '--ly', (-y * LEAF_RATE[i]) + 'px'); });
+  }
+
+  /* the reel's document offset, cached: reading it per frame would force a
+     layout recalculation on every one of them */
+  var reelTop = 0;
+  function measure() {
+    var t = 0, n = reel;
+    while (n) { t += n.offsetTop; n = n.offsetParent; }
+    reelTop = t;
+    heroH = Math.max(320, reel.offsetTop);
+    last = -1;
+  }
+
+  /* Gate the frame on the raw scroll position, NOT on the reel's clamped
+     progress. The clamped value is pinned at 0 for the whole hero, so
+     gating on it meant the hero stopped repainting the moment you were
+     above the reel, and it stayed frozen at whatever opacity it last
+     had on the way down. */
+  var running = false, raf = 0, last = -1;
+  function frame() {
+    var sy = window.scrollY;
+    if (sy !== last) {
+      last = sy;
+      hero();
+      paint(clamp(sy - reelTop, 0, LEN));
+    }
+    raf = requestAnimationFrame(frame);
+  }
+
+  function start() { if (!running) { running = true; raf = requestAnimationFrame(frame); } }
+  function stop()  { if (running) { running = false; cancelAnimationFrame(raf); } }
+
+  var watching = false, resizeTimer = 0;
+
+  function enable() {
+    if (reduced || !wide.matches) {
+      stop();
+      document.documentElement.classList.remove('motion');
+      set(heroIn, '--hy', '0px'); set(heroIn, '--ho', 1);
+      return;
+    }
+    document.documentElement.classList.add('motion');
+    document.documentElement.style.setProperty('--len', LEN + 'px');
+    measure();
+    /* only burn frames while the reel is anywhere near the window */
+    if (!watching && 'IntersectionObserver' in window) {
+      watching = true;
+      new IntersectionObserver(function (es) {
+        es[0].isIntersecting ? start() : (stop(), hero());
+      }, { rootMargin: '120% 0px' }).observe(reel);
+    } else if (!watching) { start(); }
+  }
+
+  enable();
+  wide.addEventListener('change', enable);
+  addEventListener('scroll', function () { if (!running) hero(); }, { passive: true });
+  addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { if (running || wide.matches) measure(); }, 120);
+  }, { passive: true });
+  /* late-loading fonts change the hero's height, which moves the reel */
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+})();
+</script>
+</body>
+</html>

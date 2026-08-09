@@ -1,0 +1,59 @@
+name: Bug report
+description: Something in the app broke or behaved wrong.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If this is about a **module** doing something it should not, use
+        **Report a module** instead — that path moves faster.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you saw, and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to make it happen again
+      placeholder: |
+        1. Open the panel
+        2. ...
+    validations:
+      required: false
+  - type: input
+    id: rin-version
+    attributes:
+      label: Rin version
+      description: On the About card, in Rin's menu.
+      placeholder: 1.9.0
+    validations:
+      required: true
+  - type: input
+    id: macos-version
+    attributes:
+      label: macOS version
+      placeholder: macOS 15.5
+    validations:
+      required: true
+  - type: dropdown
+    id: claude-alone
+    attributes:
+      label: Does claude run fine in a plain Terminal window?
+      description: This separates a Rin bug from a Claude Code one. Both are worth fixing, but only one of them lives here.
+      options:
+        - "Yes, claude works fine outside Rin"
+        - "No, it misbehaves there too"
+        - "Have not tried"
+    validations:
+      required: false
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: A screenshot, what was in the tab when it broke, whether it happens every time.
+    validations:
+      required: false
