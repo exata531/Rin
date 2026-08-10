@@ -66,7 +66,7 @@
   --wordmark:rgba(68, 19, 6, .17);
   --mark:    rgba(126, 231, 135, .5);   /* the phosphor highlighter */
 
-  --term:    #232936;
+  --term:    #242a36;
   --term-fg: #dde0e5;
   --band-2:  #99a2b0;
   --band-3:  #7c8593;
@@ -343,9 +343,10 @@ main:focus { outline: none; }
 
 /* ── the stage: a Mac desktop at sunrise ───────────────────── */
 .stage {
+  --stage-r: clamp(20px, 2.6vw, 34px);
   container-type: size;
   position: relative; width: 100%; aspect-ratio: 16 / 10;
-  border-radius: clamp(20px, 2.6vw, 34px); overflow: hidden;
+  border-radius: var(--stage-r); overflow: hidden;
   box-shadow: var(--shadow-stage);
   background:
     radial-gradient(115% 90% at 16% 4%, #ffe7c8 0%, rgba(255,231,200,0) 58%),
@@ -359,6 +360,13 @@ main:focus { outline: none; }
   font-size: 30cqw; line-height: .82; color: rgba(255,255,255,.11);
   pointer-events: none; user-select: none;
 }
+/* the wallpaper's second signature: the app numbers its eras by Japanese
+   cities and 1.0 is Tokyo, so the desktop quietly faces the same skyline
+   the about card draws. Shelves and flared legs, or it reads as a rocket. */
+.stage .sky {
+  position: absolute; left: 3.5%; bottom: 0; height: 34cqh;
+  fill: rgba(255,255,255,.09); pointer-events: none;
+}
 
 /* menu bar */
 .mb {
@@ -366,6 +374,9 @@ main:focus { outline: none; }
   display: flex; align-items: center; gap: 2.2cqw; padding: 0 1.8cqw;
   background: rgba(20, 14, 12, .22);
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  /* the blur layer refuses the stage's corner clip (long-standing Chromium
+     quirk), so the strip carries the same radius itself */
+  border-radius: var(--stage-r) var(--stage-r) 0 0;
   font-size: 1.22cqw; font-weight: 500; color: rgba(255,255,255,.8);
 }
 .mb .app { font-weight: 700; color: rgba(255,255,255,.98); }
@@ -375,6 +386,8 @@ main:focus { outline: none; }
   color: color-mix(in srgb, var(--amber) calc(var(--hot, 0) * 100%), rgba(255,255,255,.92));
   transform: scale(calc(1 + var(--hot, 0) * .14));
 }
+/* the glyph wears a little text face in the real menu bar; so here */
+.mb .glyph .face { font-size: .72em; margin-left: .45em; letter-spacing: -.04em; }
 
 /* dock */
 .dock {
@@ -397,35 +410,50 @@ main:focus { outline: none; }
 
 /* the panel */
 .panel {
-  position: absolute; top: 3.4cqw; left: 50%; width: 56cqw; margin-left: -28cqw;
+  position: absolute; top: 3.7cqw; left: 50%; width: 56cqw; margin-left: -28cqw;
   z-index: 2; background: var(--term);
-  border-radius: 0 0 1.3cqw 1.3cqw; overflow: hidden;
+  /* rounded on all four corners: the real panel hangs a hair below the
+     menu bar rather than growing out of it, and the desktop shows in
+     the gap. Radius measured off a real screenshot, not guessed. */
+  border-radius: .7cqw; overflow: hidden;
   transform-origin: top center;
   transform:
     translateY(calc((var(--open, 1) - 1) * .8cqw))
     scale(calc(1 + var(--zoom, 0) * .22))
     scaleY(max(.014, var(--open, 1)));
   opacity: clamp(0, calc(var(--open, 1) * 7), 1);
-  box-shadow: 0 .1cqw 0 rgba(0,0,0,.45), 0 3cqw 6cqw -2cqw rgba(40,15,5,.55);
+  box-shadow: 0 .1cqw .35cqw rgba(0,0,0,.35), 0 3cqw 6cqw -2cqw rgba(40,15,5,.55);
   will-change: transform;
 }
-.tabs { display: flex; align-items: center; gap: .6cqw; padding: .6cqw .75cqw; background: rgba(221,224,229,.06); }
+/* The bar is the one LIGHT thing on the panel. In the app it is system
+   glass riding over the desktop, so it reads pale against the slate
+   below it; painting it as more slate was the single biggest lie the
+   mock told next to a real screenshot. */
+.tabs { display: flex; align-items: center; gap: .6cqw; padding: .55cqw .7cqw; background: #dcdfe4; }
 .tab {
   flex: 1; position: relative; height: 2.4cqw; border-radius: 99px; min-width: 0;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(221,224,229,.05); color: var(--band-2);
+  background: rgba(93,102,116,.16); color: #4c5361;
   font-size: 1.1cqw; font-family: var(--ui);
   transform: translateX(calc((var(--in, 1) - 1) * 2cqw));
   opacity: var(--in, 1);
 }
 .tab .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 2cqw; }
-.tab.on { background: rgba(221,224,229,.15); color: var(--term-fg); font-weight: 600; }
+.tab .t b { font-weight: 400; margin-right: .45cqw; }  /* the working spinner, same mark the engine prints */
+.tab.on { background: #fbfcfd; color: #1d222c; font-weight: 600; box-shadow: 0 .06cqw .25cqw rgba(29,34,44,.22); }
 .tab .slot { position: absolute; right: .9cqw; display: flex; align-items: center; }
+.pinb { flex: none; width: 2.2cqw; display: grid; place-items: center; color: #6b7280; }
+.pinb svg { width: 1.3cqw; height: 1.3cqw; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .plus {
   width: 2.2cqw; height: 2.2cqw; flex: none; border-radius: 99px;
   display: grid; place-items: center; font-size: 1.1cqw;
-  background: rgba(221,224,229,.15); color: var(--term-fg);
+  background: #fbfcfd; color: #1d222c; box-shadow: 0 .06cqw .25cqw rgba(29,34,44,.22);
 }
+/* on the pale bar the three states keep their words, re-inked to survive
+   a light ground; the legend's copies still sit on slate and keep theirs */
+.tabs .dot.wants   { background: #f6f7f9; box-shadow: inset 0 0 0 .09cqw rgba(29,34,44,.5); }
+.tabs .dot.working { background: #7c8896; }
+.tabs .dot.ended   { background: var(--amber); }
 .dot {
   flex: none; width: .56cqw; height: .56cqw; border-radius: 99px; display: block;
   transform: scale(calc(1 + var(--pop, 0) * .9));
@@ -450,6 +478,11 @@ main:focus { outline: none; }
 .legend { opacity: var(--o, 0); }
 .screen .u { color: var(--band-2); }
 .screen .d { color: var(--band-3); }
+/* the engine's own furniture: the rule-framed prompt box and the mode
+   line under it, the two things anyone who has run it recognizes */
+.screen .rule { border-top: .07cqw solid rgba(221,224,229,.16); margin: .55cqw 0; }
+.screen .st { font-size: .92em; }
+.screen .au { color: var(--amber); }
 .screen .g { color: var(--green); }
 .screen .ln { opacity: var(--o, 1); }
 .screen .gap { height: 1.9cqw; }
@@ -649,7 +682,7 @@ html:not(.motion) .legend { display: none; }
     container-type: normal; aspect-ratio: auto;
     background: none; box-shadow: none; border-radius: 0;
   }
-  .mb, .dock, .stage::after { display: none; }
+  .mb, .dock, .stage::after, .stage .sky { display: none; }
   .panel {
     position: static; width: 100%; margin: 0;
     border-radius: 18px; transform: none; opacity: 1;
@@ -658,9 +691,13 @@ html:not(.motion) .legend { display: none; }
   .tabs { gap: 6px; padding: 7px 8px; }
   .tab { height: 30px; font-size: 13px; transform: none; opacity: 1; }
   .tab .t { padding: 0 22px; }
+  .tab .t b { margin-right: 5px; }
   .tab .slot { right: 10px; }
+  .pinb { width: 26px; }
+  .pinb svg { width: 15px; height: 15px; }
   .plus { width: 26px; height: 26px; font-size: 12px; }
   .dot { width: 7px; height: 7px; transform: none; }
+  .screen .rule { border-top-width: 1px; margin: 6px 0; }
   .body { min-height: 0; }
   .screen { padding: 16px 18px 20px; font-size: 13px; }
   .screen .gap { height: 18px; }
@@ -859,12 +896,15 @@ html:not(.motion) .legend { display: none; }
         </div>
 
         <p class="sr">
-          The illustration alongside shows a Mac desktop. Rin's panel drops down out of the
-          menu bar carrying three session tabs named vault, essay and rin. The question
+          The illustration alongside shows a Mac desktop, where the menu bar glyph 凛
+          wears a small text face and a faint Tokyo Tower skyline sits in the wallpaper. Rin's panel drops down out of the
+          menu bar carrying three session tabs named vault, essay and rin on a pale tab
+          bar, with a pin and a new-tab button at its end. The question
           "what is due thursday" is typed, and the answer comes back: bio lab writeup and
           the history reading response, with the writeup named as the one that eats the
-          evening. Each tab carries a status dot. The app then quits and reopens with the
-          same conversation still on screen.
+          evening. Each tab carries a status dot, and the working one carries the engine's
+          asterisk spinner. Below the answer sits the framed prompt line. The app then
+          quits and reopens with the same conversation still on screen.
         </p>
 
         <div class="stage" id="stage" aria-hidden="true">
@@ -873,9 +913,18 @@ html:not(.motion) .legend { display: none; }
             <span class="hide-s">File</span><span class="hide-s">Edit</span><span class="hide-s">View</span>
             <span class="sp"></span>
             <span>100%</span>
-            <span class="glyph" id="glyph">凛</span>
+            <span class="glyph" id="glyph">凛<span class="face">(｡•ᴗ•｡)</span></span>
             <span>Tue 9:41</span>
           </div>
+
+          <svg class="sky" viewBox="0 0 240 120" preserveAspectRatio="xMinYMax meet" aria-hidden="true">
+            <path d="M27.2 4h1.6v15h-1.6z
+              M28 18 C24 40 18 72 6 120 L13 120 C20 86 25 62 28 53 C31 62 36 86 43 120 L50 120 C38 72 32 40 28 18 Z
+              M12 54h32v4.5h-32z M19 33h18v3.5h-18z
+              M62 86h22v34h-22z M88 70h20v50h-20z M112 92h14v28h-14z
+              M130 78h11v42h-11z M141 64h14v56h-14z M159 88h18v32h-18z
+              M181 72h13v48h-13z M198 94h20v26h-20z M222 82h12v38h-12z"/>
+          </svg>
 
           <div class="dock" aria-hidden="true">
             <i></i><i></i><i class="rin">凛</i><i></i><i></i>
@@ -883,15 +932,16 @@ html:not(.motion) .legend { display: none; }
 
           <div class="panel" id="panel">
             <div class="tabs">
-              <div class="tab on" data-tab><span class="t">vault</span><span class="slot"><span class="dot working" data-dot></span></span></div>
+              <div class="tab on" data-tab><span class="t"><b>&#x2733;&#xFE0E;</b>vault</span><span class="slot"><span class="dot working" data-dot></span></span></div>
               <div class="tab" data-tab><span class="t">essay</span><span class="slot"><span class="dot wants" data-dot></span></span></div>
               <div class="tab" data-tab><span class="t">rin</span><span class="slot"><span class="dot ended" data-dot></span></span></div>
+              <span class="pinb" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 3.5h6M10 3.5v4.8l-3 3.4c-.5.6-.1 1.4.6 1.4h8.8c.7 0 1.1-.8.6-1.4l-3-3.4V3.5M12 13.2V20"/></svg></span>
               <span class="plus" aria-hidden="true">+</span>
             </div>
 
             <div class="body">
               <div class="screen" id="screen">
-                <div class="u">&gt; <span class="type" id="type">what is due thursday</span><span class="caret" id="caret"></span></div>
+                <div class="u">&#10095; <span class="type" id="type">what is due thursday</span><span class="caret" id="caret"></span></div>
                 <div class="gap"></div>
                 <div class="ln" data-ln>bio lab writeup and the history reading</div>
                 <div class="ln" data-ln>response. that's the whole list.</div>
@@ -899,7 +949,11 @@ html:not(.motion) .legend { display: none; }
                 <div class="ln" data-ln>the writeup is the one that eats your</div>
                 <div class="ln" data-ln>evening, so start there.</div>
                 <div class="gap"></div>
-                <div class="ln d" data-ln>&gt; <span class="caret"></span></div>
+                <div class="ln d" data-ln>&#x2733;&#xFE0E; Worked for 6s</div>
+                <div class="ln rule" data-ln></div>
+                <div class="ln" data-ln>&#10095; <span class="caret"></span></div>
+                <div class="ln rule" data-ln></div>
+                <div class="ln d st" data-ln><span class="au">&#9656;&#9656; auto mode on</span> (shift+tab to cycle)</div>
               </div>
 
               <div class="legend" id="legend">
@@ -1261,8 +1315,10 @@ html:not(.motion) .legend { display: none; }
     set(type, '--q', Math.round(track(y, [[960, 0], [1400, QLEN]])));
     var answered = span(y, 1440, 1520);
     set(caret, 'opacity', 1 - answered);
+    /* 45 per line, not 60: the prompt box and mode line joined the reveal,
+       and at 60 the tail was still assembling when act three takes over */
     lines.forEach(function (l, i) {
-      set(l, '--o', span(y, 1450 + i * 60, 1600 + i * 60));
+      set(l, '--o', span(y, 1450 + i * 45, 1600 + i * 45));
     });
 
     /* act three: the panel leans in and the dots explain themselves */
