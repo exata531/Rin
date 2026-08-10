@@ -117,8 +117,7 @@ Settings.
 
 ### Why the warning
 
-Rin isn't signed because I don't have a paid Apple developer subscription
-(it's about a hundred bucks a year and this app is free, so, no). Everything
+Rin isn't signed because I don't have a paid Apple developer subscription. Everything
 it does is in this repo where you can read it, and if you'd rather not trust
 a download from a stranger, the two commands under
 [Build from source](#build-from-source) make the exact same app on your own
