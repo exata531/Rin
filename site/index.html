@@ -214,13 +214,20 @@ main:focus { outline: none; }
   font-size: var(--mark-text); font-weight: 800; letter-spacing: -.4px;
 }
 .mark .sq {
-  flex: none; width: var(--mark-tile); height: var(--mark-tile);
+  flex: none; position: relative; width: var(--mark-tile); height: var(--mark-tile);
   border-radius: var(--r-tile); overflow: hidden; line-height: 1;
   background: var(--solid); color: var(--solid-fg);
   display: grid; place-items: center;
   font-size: var(--mark-glyph); font-weight: 400;
   box-shadow: var(--shadow-mark);
 }
+/* hover the logo and she looks back */
+.mark .sq::after {
+  content: "(¬‿¬)"; position: absolute; inset: 0;
+  display: grid; place-items: center; font-size: 11px; font-weight: 600;
+  background: var(--solid); opacity: 0; transition: opacity .18s var(--settle);
+}
+.mark:hover .sq::after { opacity: 1; }
 .nav .right { margin-left: auto; display: flex; align-items: center; gap: 18px; }
 .nav .quiet { font-size: var(--t-ui); font-weight: 700; color: var(--ink-2); transition: color .2s var(--settle); }
 .nav .quiet:hover { color: var(--ink); }
@@ -320,6 +327,33 @@ main:focus { outline: none; }
 .badge { font-size: var(--t-small); font-weight: 600; color: var(--ink-3); line-height: 1.35; }
 .badge b { display: block; font-weight: 800; color: var(--ink-2); }
 @media (max-width: 660px) { .badges { margin-left: 0; } }
+
+/* ── the paper plane (Flighty's dashed-path joy, folded our way):
+   your question takes off from the buttons and flies down toward the
+   menu bar the demo is about to drop from. Scroll is the wind. ── */
+.flight {
+  display: none; position: absolute; left: 52%; bottom: -260px;
+  width: 46%; z-index: 1; pointer-events: none;
+  opacity: var(--fo, 1);
+}
+.flight .trail { fill: none; stroke: var(--ink-3); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1 9; opacity: .55; }
+.flight .plane { fill: var(--ink-2); }
+.flight .plane .fold { stroke: var(--cream); stroke-width: 1.2; }
+
+/* sparkles out of a pressed download button; they live for one beat */
+.spark {
+  position: fixed; z-index: 99; pointer-events: none;
+  font-size: 15px; font-weight: 700; color: var(--ink-2);
+  animation: sparkfly .65s var(--settle) forwards;
+}
+@keyframes sparkfly {
+  from { transform: translate(0, 0) scale(.5); opacity: 1; }
+  to   { transform: translate(var(--dx), var(--dy)) scale(1.15) rotate(var(--rot)); opacity: 0; }
+}
+
+/* small things that wink back */
+.tile:hover svg { animation: wiggle .55s var(--boing); }
+@keyframes wiggle { 30% { transform: rotate(-7deg) scale(1.09); } 65% { transform: rotate(4deg); } }
 
 /* ══ the reel: one pinned stage, four acts ═════════════════════
    .reel is a tall spacer. .pin sticks to the viewport and holds
@@ -659,6 +693,9 @@ html.motion .act p { max-width: 40ch; }
 html.motion .stage { width: min(100%, calc((100vh - 300px) * 1.6)); margin-inline: auto; }
 html.motion .panel { --open: 0; }
 html.motion .type { --q: 0; }
+/* the plane only exists where the reel does: wide, motion allowed */
+html.motion .flight { display: block; }
+@media (max-width: 999px) { html.motion .flight { display: none; } }
 html.motion .screen .ln, html.motion .tab, html.motion .dot { --o: 0; --in: 0; }
 
 /* Without the pinned stage there is no reason to read four headings
@@ -733,6 +770,7 @@ html:not(.motion) .legend { display: none; }
   body { background: #fff; color: #000; font-size: 11pt; }
   .hero { padding-top: 0; }
   .hero-in { opacity: 1 !important; transform: none !important; }
+  .flight, .spark { display: none !important; }
   .reel { height: auto !important; }
   .pin { position: static !important; height: auto !important; padding: 0 !important; display: block !important; }
   .acts { display: block !important; }
@@ -856,6 +894,14 @@ html:not(.motion) .legend { display: none; }
           </div>
         </div>
       </div>
+
+      <svg class="flight" id="flight" viewBox="0 0 600 300" aria-hidden="true">
+        <path class="trail" id="fpath" d="M14 22 C150 -8 302 28 398 106 C466 162 542 236 588 290"/>
+        <g class="plane" id="plane">
+          <path d="M2 0 L-15 7 L-9.5 0 L-15 -7 Z"/>
+          <path class="fold" d="M2 0 L-9.5 0" fill="none"/>
+        </g>
+      </svg>
     </header>
 
     <!-- ══ the reel ══════════════════════════════════════════ -->
@@ -1261,6 +1307,10 @@ html:not(.motion) .legend { display: none; }
       caret  = el('caret'),
       heroIn = el('heroIn'),
       heroArt = el('heroArt'),
+      flight = el('flight'),
+      plane  = el('plane'),
+      fpath  = el('fpath'),
+      fplen  = 0,
       leaves = all('#heroArt [data-leaf]'),
       acts   = all('#acts .act'),
       tabs   = all('#panel [data-tab]'),
@@ -1344,6 +1394,16 @@ html:not(.motion) .legend { display: none; }
     var y = window.scrollY;
     set(heroIn, '--hy', (-y * .16) + 'px');
     set(heroIn, '--ho', 1 - span(y, heroH * .34, heroH * .92) * .88);
+    /* the plane rides its dashed trail; scroll is the wind. The fade has
+       its own key so the flight outlives the cluster by a beat. */
+    if (fplen > 0) {
+      var ft = span(y, 24, heroH * .85);
+      var fp = fpath.getPointAtLength(ft * fplen);
+      var fq = fpath.getPointAtLength(Math.min(fplen, ft * fplen + 6));
+      var fa = Math.atan2(fq.y - fp.y, fq.x - fp.x) * 180 / Math.PI;
+      plane.setAttribute('transform', 'translate(' + fp.x + ' ' + fp.y + ') rotate(' + fa + ')');
+      set(flight, '--fo', 1 - span(y, heroH * .78, heroH * .96));
+    }
     if (!heroArt) return;
     set(heroArt, '--ao', 1 - span(y, heroH * .2, heroH * .78) * .95);
     leaves.forEach(function (l, i) { set(l, '--ly', (-y * LEAF_RATE[i]) + 'px'); });
@@ -1357,6 +1417,7 @@ html:not(.motion) .legend { display: none; }
     while (n) { t += n.offsetTop; n = n.offsetParent; }
     reelTop = t;
     heroH = Math.max(320, reel.offsetTop);
+    if (fpath) { try { fplen = fpath.getTotalLength(); } catch (e) { fplen = 0; } }
     last = -1;
   }
 
@@ -1409,6 +1470,29 @@ html:not(.motion) .legend { display: none; }
   }, { passive: true });
   /* late-loading fonts change the hero's height, which moves the reel */
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+
+  /* a pressed download button throws a handful of sparks. mousedown, not
+     click, so the beat lands before the navigation does. */
+  if (!reduced) {
+    all('.btn--black').forEach(function (b) {
+      b.addEventListener('mousedown', function (e) {
+        var chars = ['✧', '✦', '☆', '·', '♪'];
+        for (var i = 0; i < 8; i++) {
+          var s = document.createElement('span');
+          s.className = 'spark';
+          s.textContent = chars[i % chars.length];
+          var a = Math.random() * Math.PI * 2, r = 34 + Math.random() * 44;
+          s.style.left = e.clientX + 'px';
+          s.style.top = e.clientY + 'px';
+          s.style.setProperty('--dx', Math.cos(a) * r + 'px');
+          s.style.setProperty('--dy', (Math.sin(a) * r - 18) + 'px');
+          s.style.setProperty('--rot', (Math.random() * 80 - 40) + 'deg');
+          document.body.appendChild(s);
+          setTimeout(function (n) { return function () { n.remove(); }; }(s), 700);
+        }
+      });
+    });
+  }
 })();
 </script>
 </body>
