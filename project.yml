@@ -66,8 +66,8 @@ targets:
         # Semantic Versioning (semver.org). 0.x is initial development, which
         # is what this is, and 1.0.0 is the public release. Nobody types
         # either number: scripts/release.py writes both. See docs/versions.md.
-        CFBundleShortVersionString: "1.0.0"
-        CFBundleVersion: "112"
+        CFBundleShortVersionString: "1.0.1"
+        CFBundleVersion: "114"
         LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
         LSUIElement: true
         NSPrincipalClass: NSApplication

@@ -201,15 +201,62 @@ enum AppConfig {
         FileManager.default.fileExists(atPath: transcriptPath(for: sessionID))
     }
 
-    /// Whether this session wrote to its conversation in the last few
-    /// seconds. Claude appends a turn at a time, so a file being touched
-    /// right now is the cheapest honest sign that one is in flight, and it
-    /// costs a single stat rather than anything watching the process.
+    /// Whether this session is mid-turn. A fresh write is still the cheap
+    /// fast path, but it stopped being sufficient on 2026-08-16: the Fable
+    /// engine thinks and runs tools for minutes between appends, so a light
+    /// keyed on mtime alone sat dark through exactly the work worth showing.
+    /// When the file has gone quiet, the tail of the conversation says
+    /// whether the turn is actually open — an assistant event still running
+    /// tools, or a prompt or tool result the model owes a reply to — and
+    /// that answer holds until the file goes stale enough to read as a
+    /// crash. One stat almost always; one 64 KB tail read only in the quiet
+    /// stretches of an open turn.
     static func isWorking(sessionID: UUID, within seconds: TimeInterval = 5) -> Bool {
-        let attributes = try? FileManager.default.attributesOfItem(
-            atPath: transcriptPath(for: sessionID))
+        let path = transcriptPath(for: sessionID)
+        let attributes = try? FileManager.default.attributesOfItem(atPath: path)
         guard let modified = attributes?[.modificationDate] as? Date else { return false }
-        return Date().timeIntervalSince(modified) < seconds
+        let age = Date().timeIntervalSince(modified)
+        if age < seconds { return true }
+        // A turn can plausibly hold one silent stretch this long; past it,
+        // an "open" tail is a crashed or killed claude, and the light lies
+        // if it stays on. Also what keeps a restart's wait-for-quiet from
+        // being held hostage forever.
+        guard age < 10 * 60 else { return false }
+        return turnLeftOpen(atPath: path)
+    }
+
+    /// Read the conversation's tail and answer whether the last substantive
+    /// event leaves the turn open. Bookkeeping rows (last-prompt, mode,
+    /// ai-title, attachments…) trail every turn, so scan backward to the
+    /// last assistant or user event: an assistant still calling tools or a
+    /// user row (a prompt, or a tool result the model owes a reply to)
+    /// means open; an assistant that ended its turn, or the interrupt
+    /// marker, means closed.
+    private static func turnLeftOpen(atPath path: String) -> Bool {
+        guard let handle = FileHandle(forReadingAtPath: path) else { return false }
+        defer { try? handle.close() }
+        let size = (try? handle.seekToEnd()) ?? 0
+        let window: UInt64 = 65536
+        try? handle.seek(toOffset: size > window ? size - window : 0)
+        guard let data = try? handle.readToEnd(),
+              let text = String(data: data, encoding: .utf8) else { return false }
+        for line in text.split(separator: "\n").reversed() {
+            guard let object = try? JSONSerialization.jsonObject(
+                      with: Data(line.utf8)) as? [String: Any],
+                  let type = object["type"] as? String else { continue }
+            switch type {
+            case "assistant":
+                let stop = (object["message"] as? [String: Any])?["stop_reason"] as? String
+                // No stop reason is a turn still streaming; tool_use is a
+                // turn that owes tool results and another pass.
+                return stop == nil || stop == "tool_use"
+            case "user":
+                return !line.contains("Request interrupted")
+            default:
+                continue    // bookkeeping between turns; keep scanning back
+            }
+        }
+        return false
     }
 
     static func transcriptPath(for sessionID: UUID) -> String {

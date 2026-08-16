@@ -9,6 +9,19 @@ Versions follow [Semantic Versioning](https://semver.org/); the scheme and the
 city each era is named after are in [docs/versions.md](docs/versions.md).
 **0.x is initial development. 1.0.0 is the public release.**
 
+## 1.0.1: 2026-08-16
+
+**The working light learned the new engine's rhythm.** The light — the
+chip's glow and the menu-bar glyph's breath alike — keyed on "the
+conversation file was written in the last few seconds", and the engine
+that arrived on 2026-08-14 thinks and runs tools for minutes between
+writes, so the light sat dark through exactly the work most worth
+showing. When the file goes quiet the app now reads the conversation's
+tail and asks whether the turn is actually open (a model still running
+tools, or a prompt it owes an answer) and lights accordingly. A file
+quiet past ten minutes reads as a crash and the light lets go, which
+also keeps a restart's wait-for-quiet from being held hostage.
+
 ## 1.0.0: 2026-08-09
 
 **Tokyo. The public release.** The same app that was running yesterday as
