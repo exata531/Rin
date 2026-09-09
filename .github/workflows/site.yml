@@ -1,21 +1,33 @@
-name: Publish the site
+name: Publish the redirect
 
-# Publishes site/ to GitHub Pages. Pages cannot exist while the repo is
-# private (free plan), so the job skips itself until the repo flips public —
-# a skipped run, not a red X on every push. Once public it still needs Pages
-# switched on once: Settings, Pages, Source: GitHub Actions.
+# The Rin site itself lives at petermei.com/rin, served out of the petermei
+# repo. What GitHub Pages publishes from here is redirect/, so every link ever
+# shared to exata531.github.io/Rin still lands on the real page instead of on a
+# second copy that can drift.
 #
-# The modules page is generated from modules/registry.json, and the generated
-# file is committed. This job rebuilds it and refuses to deploy if what is
-# committed is not what the generator produces, so the repo and the live site
-# can never quietly disagree. It does NOT commit the fix itself: a push made
+# Pages cannot exist while the repo is private (free plan), so the job skips
+# itself until the repo flips public — a skipped run, not a red X on every
+# push. Once public it still needs Pages switched on once: Settings, Pages,
+# Source: GitHub Actions.
+#
+# site/ is still the source of the real page; it is copied into the petermei
+# repo under public/rin. The modules page is generated from
+# modules/registry.json and the generated file is committed, so this job
+# rebuilds it and refuses to run if what is committed is not what the
+# generator produces. That check is what keeps this repo and petermei.com/rin
+# from quietly disagreeing. It does NOT commit the fix itself: a push made
 # with the default token fires no further workflows, so a chain that commits
 # and expects a redeploy would silently never deploy at all.
 
 on:
   push:
     branches: [main]
-    paths: ['site/**', 'modules/**', 'scripts/**', '.github/workflows/site.yml']
+    paths:
+      - 'site/**'
+      - 'redirect/**'
+      - 'modules/**'
+      - 'scripts/**'
+      - '.github/workflows/site.yml'
   workflow_dispatch:
 
 permissions:
@@ -51,6 +63,6 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: redirect
       - id: deploy
         uses: actions/deploy-pages@v4

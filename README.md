@@ -15,7 +15,7 @@ around through quits, restarts, and a week of you forgetting it exists.
 [![Downloads](https://img.shields.io/github/downloads/exata531/Rin/total)](https://github.com/exata531/Rin/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-[Website](https://exata531.github.io/Rin/) · [Install](#install) ·
+[Website](https://petermei.com/rin/) · [Install](#install) ·
 [Modules](#modules) · [Writing a module](docs/modules.md) ·
 [Build from source](#build-from-source)
 
@@ -156,7 +156,7 @@ The assistant reads out what the module adds, whether it ships scripts,
 whether anything in it runs on its own, and then waits for you to say yes.
 `/module` handles the rest: what's on the list, what you already have,
 removing one, writing your own. And on the
-[modules page](https://exata531.github.io/Rin/modules.html) every card has an
+[modules page](https://petermei.com/rin/modules.html) every card has an
 **Add to Rin** button that opens a tab already asking. Same thing, fewer
 keystrokes, and Rin still checks before it opens anything.
 

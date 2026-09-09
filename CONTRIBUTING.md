@@ -41,7 +41,8 @@ your own machine is the same app as the release.
 | `skeleton/` | the blank brain, copied once into the user's chosen folder on first run |
 | `modules/` | the module list, the registry, and a template the right shape |
 | `scripts/` | the module checker and build steps |
-| `site/` | the website, plain HTML, published by Pages |
+| `site/` | the website, plain HTML, served at petermei.com/rin |
+| `redirect/` | what Pages publishes: a redirect to petermei.com/rin |
 | `docs/` | how things work: modules, first run, versioning |
 
 ## What will not merge
