@@ -40,7 +40,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 INDEX_URL = "https://raw.githubusercontent.com/exata531/Rin/main/modules/index.json"
-REGISTRY_PAGE = "https://exata531.github.io/Rin/modules.html"
+REGISTRY_PAGE = "https://petermei.com/rin/modules.html"
 GUIDE_URL = "https://github.com/exata531/Rin/blob/main/docs/modules.md"
 
 # A module is text and small scripts. Both halves of this rule matter: the

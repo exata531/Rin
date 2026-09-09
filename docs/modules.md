@@ -69,7 +69,7 @@ or a small script, caps how big a module may be, and stages the whole thing
 outside the brain until every byte checks out. None of that is the assistant's
 judgement; it either passes or nothing is written.
 
-The [modules page](https://exata531.github.io/Rin/modules.html) has an **Add to
+The [modules page](https://petermei.com/rin/modules.html) has an **Add to
 Rin** button on every card. It opens `rin://install/<name>`, Rin asks whether you
 meant it, and then a tab opens on exactly the conversation above. A web page
 cannot install anything on your Mac, and this one does not get to either.
@@ -125,7 +125,7 @@ instructions genuinely cannot do the job.
 ## Putting it on the list
 
 The list lives in this repo at [`modules/`](../modules), and the browsable
-version is [the modules page](https://exata531.github.io/Rin/modules.html).
+version is [the modules page](https://petermei.com/rin/modules.html).
 
 1. Push your module to a public repo of your own.
 2. Fork this one and add a single entry to `modules/registry.json`:
